@@ -6,6 +6,13 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;700;800&display=swap">
 <style>
+/* PBS Sans from the PBS font server (v1.2). Figtree is only a fallback where it can’t load (e.g. the claude.ai preview). */
+@font-face{font-family:'PBS Sans';font-weight:400;font-style:normal;src:url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans.woff2') format('woff2'),url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans.woff') format('woff');font-display:swap}
+@font-face{font-family:'PBS Sans';font-weight:400;font-style:italic;src:url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-It.woff2') format('woff2'),url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-It.woff') format('woff');font-display:swap}
+@font-face{font-family:'PBS Sans';font-weight:500;font-style:normal;src:url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-Medium.woff2') format('woff2'),url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-Medium.woff') format('woff');font-display:swap}
+@font-face{font-family:'PBS Sans';font-weight:700;font-style:normal;src:url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-Bold.woff2') format('woff2'),url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-Bold.woff') format('woff');font-display:swap}
+@font-face{font-family:'PBS Sans';font-weight:700;font-style:italic;src:url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-Bold-It.woff2') format('woff2'),url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-Bold-It.woff') format('woff');font-display:swap}
+@font-face{font-family:'PBS Sans';font-weight:900;font-style:normal;src:url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-Black.woff2') format('woff2'),url('https://www-tc.pbs.org/pbsfonts/v1.2/PBSSans-Black.woff') format('woff');font-display:swap}
 /* Layout: a review toolbar over a "device" that holds one site page plus the shared bottom player; a notes drawer on the right holds options and rationale. */
 :root{
   color-scheme: dark;
@@ -16,7 +23,7 @@
   --teal:#48d3cd; --yellow:#ffcf00; --red:#d6383a; --coral:#fe704e; --purple:#4e05ac; --light-blue:#486cd8;
   /* MultiLivestream schedule tokens */
   --ch-btn:#1f2849; --ch-btn-sel:#0f1e8c; --listing:rgba(61,74,107,.5); --listing-progress:#313d5b; --listing-sel:#0a145a; --listing-past:#303c5a;
-  /* PBS Sans is not loadable here; Figtree stands in */
+  /* PBS Sans first; Figtree is the fallback */
   --sans:'PBS Sans','Figtree','Helvetica Neue',Helvetica,Arial,sans-serif;
   --dur:.3s;
   /* prototype chrome */
@@ -1931,7 +1938,7 @@ function renderNotes() {
       <label>Program change <button class="pt-btn" data-shiftdemo="1">${P.shift ? 'Back to now' : 'Preview next program'}</button></label>
       <label>Reset choices <button class="pt-btn" data-reset="1">Use recommended</button></label>
     </section>
-    <p class="n-foot">Real data: WXXI TV listings and logos (pbs.org), WXXI News and WTJX schedules and stream URLs (radio.lls.pbs.org), snapshot Wed Nov 18, 4:05 PM ET. Only WXXI News is a real WXXI stream; WXXI Classical, Reading Service, Jazz, Holiday and Kids Radio are samples showing how extra streams behave. With Stream names set to Long, the streams show real feed names borrowed from other stations (WUFT, WGBH, KFME, KUHT, WRLK, WHYY). PBS Sans is replaced by a similar Google font in this preview. Components match the Figma file (Audiostream-Test), Nov 19.</p>`;
+    <p class="n-foot">Real data: WXXI TV listings and logos (pbs.org), WXXI News and WTJX schedules and stream URLs (radio.lls.pbs.org), snapshot Wed Nov 18, 4:05 PM ET. Only WXXI News is a real WXXI stream; WXXI Classical, Reading Service, Jazz, Holiday and Kids Radio are samples showing how extra streams behave. With Stream names set to Long, the streams show real feed names borrowed from other stations (WUFT, WGBH, KFME, KUHT, WRLK, WHYY). Type is PBS Sans from pbs.org’s font server; where it can’t load (as in the claude.ai preview), a similar Google font stands in. Components match the Figma file (Audiostream-Test), Nov 19.</p>`;
 }
 
 /* ---------- render ---------- */

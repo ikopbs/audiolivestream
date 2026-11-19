@@ -23,4 +23,4 @@ Open `index.html` in a browser, or the GitHub Pages site for this repo. Use the 
 
 ## Data
 
-TV listings and radio schedules are a snapshot from Wed Nov 18, 2026, 4:05 PM ET; the clock in the prototype is frozen at that time. Only WXXI News and the two WTJX streams are real streams; other WXXI streams are samples, and WTJX TV listings are samples. PBS Sans is replaced by Figtree.
+TV listings and radio schedules are a snapshot from Wed Nov 18, 2026, 4:05 PM ET; the clock in the prototype is frozen at that time. Only WXXI News and the two WTJX streams are real streams; other WXXI streams are samples, and WTJX TV listings are samples. Type is PBS Sans, loaded from pbs.org’s font server; Figtree is the fallback if it can’t load.
