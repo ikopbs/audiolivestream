@@ -6,6 +6,13 @@ Each round is tagged as a GitHub release (R1, R2, …). Options cut in a round a
 
 - Notes panel lists only open choices. Decided options (one option left) are hidden with the retired ones; `?archive` shows both. (Mary, Nov 20.)
 
+From the R2 UI fixes notes (Figma Read me › UI Fixes R2):
+- Player area: removed the “Watch WXXI TV instead” button.
+- Badges: red dot + LIVE for TV, headphones + LIVE for radio. The dot + LIVE + headphones version is retired.
+- No “Stopped” status: a stopped stream shows its program and time range, as when idle (player area, bottom player, station bar, side panel).
+- Phones: the page no longer gets wider than the screen (the prototype toolbar was pushing it out), so the bottom player’s close button and the header are no longer cut off.
+- Phones: schedule cells follow pbs.org/livestream below 768px: title (up to 3 lines) and the live bug only, no duration or play button, channel column clamp(90px, 30vw + 1rem, 200px). Fixes the squished cells and cut-off play icons.
+
 ## R2 (Nov 20, 2026)
 
 From the Nov 19 R1 review with Mary (notes and annotated UI fixes on the Figma Read me page).

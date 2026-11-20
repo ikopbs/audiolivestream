@@ -886,6 +886,30 @@ span.illus,.illus{display:inline-block!important;width:auto!important;font-size:
 .opt.retired{opacity:.6;border-style:dashed}
 .n-arch{font-size:11.5px;line-height:1.5;color:var(--pt-sub);margin:0}
 .n-arch a{color:var(--pt-text)}
+
+/* ===== R3 (R2 UI fixes) ===== */
+/* phones: the prototype toolbar scrolls instead of widening the page (was pushing the X and Sign In off screen) */
+html,body{max-width:100%;overflow-x:hidden}
+.proto,.workspace,.stage{max-width:100vw;min-width:0}
+.pt .seg{max-width:100%;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}
+.pt .seg::-webkit-scrollbar{display:none}
+.bp-bar{padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bp-ic{flex-shrink:0}
+.proto{grid-template-columns:minmax(0,1fr)}
+.pt{min-width:0}
+@media (max-width:600px){.pt{gap:8px}.pt-spacer{display:none}.pt .seg{flex:1 1 auto;min-width:0}#notesBtn{margin-left:auto}}
+/* schedule on phones, as pbs.org/livestream (MultiLivestream Listing.module.scss below 768px):
+   title only (up to 3 lines) plus the live bug; no duration or play button; channel column clamp(90px, 30vw + 1rem, 200px) */
+@container dev (max-width:767px){
+  .grid{--ppm:5px;--chw:clamp(90px,calc(30cqw + 16px),200px)}
+  .ch{min-height:100px}
+  .li{padding:12px 16px 12px 20px;gap:0;justify-content:flex-start}
+  .li b{white-space:normal;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;line-height:1.35}
+  .li span.d,.li .ib{display:none}
+  .li .np{font-size:10px;padding:3px 6px;margin-bottom:8px;border-width:2px}
+  .ch-btn button{min-height:100px}
+}
+@container (max-width:139px){.li .np{display:none}}
 /* ===== Notes drawer ===== */
 .notes{width:400px;border-left:1px solid var(--pt-line);background:var(--pt-bg);overflow-y:auto;min-height:0}
 .notes[hidden]{display:none}
@@ -1081,7 +1105,7 @@ const byId = (id) => SN(ALL.find(s => s.id === id));
 /* ---------- state ---------- */
 const DEF = {
   page:'home', device:'desktop', notes: window.innerWidth > 900,
-  opt:{ homeTile:'A', imagery:'brand', livePlace:'cells', liveClick:'stage', bar:'A', av:'pause', widget:'card', theme:'light', label:'derived', color:'shade', viz:'ambient', badge:'dot', marquee:'once', vizAccent:'coral', panelBg:'bluegray', navLive:'live', logoSize:'area', logoPad:'trimmed', logoVariant:'chain' },
+  opt:{ homeTile:'A', imagery:'brand', livePlace:'cells', liveClick:'stage', bar:'A', av:'pause', widget:'card', theme:'light', label:'derived', color:'shade', viz:'ambient', badge:'hp', marquee:'once', vizAccent:'coral', panelBg:'bluegray', navLive:'live', logoSize:'area', logoPad:'trimmed', logoVariant:'chain' },
   scen:{ health:'live', sched:'normal', names:'typical', streams:2 }
 };
 let S = JSON.parse(JSON.stringify(DEF));
@@ -1092,7 +1116,7 @@ if (!['card', 'embed', 'header', 'below'].includes(S.opt.widget)) S.opt.widget =
 const ARCHIVE = /(^|[?&#])archive\b/.test(location.search + '&' + location.hash.slice(1));
 const RETIRED = { homeTile:['B','C'], navLive:['radio','tv'], av:['ask','end'], bar:['B','C','D'], marquee:['loop','off'], panelBg:['navy'],
   imagery:['art'], label:['full','logo'], color:['station','genre'], logoSize:['box','height'], logoPad:['delivered'], logoVariant:['white','wcob'],
-  vizAccent:['purple','yellow'], livePlace:['section','grid'], liveClick:['banner','bar','drawer'], theme:['brand'], badge:['radio'] };
+  vizAccent:['purple','yellow'], livePlace:['section','grid'], liveClick:['banner','bar','drawer'], theme:['brand'], badge:['radio','dot'] };
 const isRetired = (k, v) => (RETIRED[k] || []).includes(v);
 if (S.opt.livePlace === 'rows') S.opt.livePlace = 'cells';
 if (!ARCHIVE) for (const k of Object.keys(RETIRED)) if (isRetired(k, S.opt[k])) S.opt[k] = DEF.opt[k];
@@ -1345,7 +1369,6 @@ function audioStage(st, banner) {
     unsupported:['Can’t play in this browser', 'Try another browser'],
     ad:['Ad break', `${esc(st.name)} starts after the ad`],
     reconnecting:[esc(n.title), 'Reconnecting…'],
-    stopped:[esc(n.title), 'Stopped'],
     'paused-video':[esc(n.title), 'Paused while video plays']
   }[status];
   const title = S1 ? S1[0] : esc(n.title);
@@ -1367,8 +1390,7 @@ function audioStage(st, banner) {
 }
 function stageCtl(st) {
   const on = isPlaying(st.id);
-  return `<div class="st-ctl"><button class="pp" data-play="${st.id}" aria-label="${on ? 'Pause' : 'Play'} ${esc(st.name)}">${pIcon(st.id)}</button>
-    <button class="tbtn" data-watchtv="${TVS[st.station].some(c => c.id === V.ch) ? V.ch : TVS[st.station][0].id}">Watch ${esc(st.station)} TV instead</button></div>`;
+  return `<div class="st-ctl"><button class="pp" data-play="${st.id}" aria-label="${on ? 'Pause' : 'Play'} ${esc(st.name)}">${pIcon(st.id)}</button></div>`;
 }
 function grid(stn = 'WXXI') {
   const t0 = Z(21), win = 120, sts = streamsFor(stn);
@@ -1542,7 +1564,6 @@ function stationBar() {
   let now = n.none ? cur.freq : n.title;
   if (mine && P.status === 'offline') now = 'Stream offline';
   if (mine && P.status === 'connecting') now = 'Connecting…';
-  if (mine && P.status === 'stopped') now = 'Stopped';
   if (mine && P.status === 'paused-video') now = 'Paused while video plays';
   return `<div class="b-np ${th}" id="hero" role="region" aria-label="WTJX live radio">
     <div class="b-np-in">
@@ -1592,7 +1613,6 @@ function barLines(st) {
   switch (status) {
     case 'offline': l1 = 'Stream offline'; l2 = 'Try again in a few minutes'; break;
     case 'paused-video': l2 = 'Paused while video plays'; break;
-    case 'stopped': l2 = 'Stopped'; break;
     case 'connecting': l2 = 'Connecting…'; break;
     case 'ad': l1 = 'Ad break'; l2 = `${st.name} starts after the ad`; break;
     case 'reconnecting': l2 = 'Reconnecting…'; break;
@@ -1704,7 +1724,7 @@ function layer() {
     const st = byId(P.id), n = nowOf(st), tz = tzOf(st);
     h += `<aside class="drawer" aria-label="Now playing"><div class="drawer-h"><span>Now playing</span><button class="xbtn" data-closedrawer="1" aria-label="Close panel">${SVG.close}</button></div>
       <div class="drawer-b"><div class="np-head"><span class="sq">${field(st)}${lockup(st, 22)}</span><span class="tx"><b>${esc(P.status === 'offline' ? 'Stream offline' : n.title)}</b><span>${esc(st.name)}</span></span></div>
-      <div class="dr-ctl"><button class="pp" data-play="${st.id}" aria-label="${isPlaying(st.id) ? 'Pause' : 'Play'} ${esc(st.name)}">${pIcon(st.id)}</button>${P.status === 'stopped' ? '<span>Stopped</span>' : ''}</div>
+      <div class="dr-ctl"><button class="pp" data-play="${st.id}" aria-label="${isPlaying(st.id) ? 'Pause' : 'Play'} ${esc(st.name)}">${pIcon(st.id)}</button></div>
       <div class="np-sec"><h5>Today on ${esc(st.name)}</h5>${st.sched ? `<div class="sch-list">${st.sched.map(e => `<div class="${NOW >= e.s && NOW < e.e ? 'cur' : ''}"><span>${fmtS(e.s, tz)}</span>${esc(e.t)}</div>`).join('')}</div>` : '<p style="font-size:13px;color:var(--pebble)">No schedule published for this stream.</p>'}</div>
       <div class="np-sec"><h5>More from WXXI radio</h5><div class="other">${streamsFor('WXXI').filter(s => s.id !== st.id).map(s => `<button data-play="${s.id}" data-switch="1"><span class="sq">${field(s, 'brand')}</span><span class="t"><b>${esc(s.name)}</b><span>${esc(nowOf(s).title)}</span></span>${IB(s.id, true)}</button>`).join('')}</div></div>
       </div></aside>`;
