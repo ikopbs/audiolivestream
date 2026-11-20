@@ -2,7 +2,7 @@
 
 Each round is tagged as a GitHub release (R1, R2, …). Options cut in a round are not deleted: add `?archive` to the URL (for example `index.html?archive#home`) to see them again in the notes panel, marked “Retired in R2”.
 
-## R4 (in progress, branch `r4`)
+## R4 (Nov 20, 2026)
 
 - Tile and player imagery: decided A, the branded field. Station scenery photo retired (still under `?archive`).
 
