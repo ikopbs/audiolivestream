@@ -10,6 +10,7 @@ From the R3 UI fixes notes (Figma Read me › UI Fixes R3):
 - Bottom player: the expand control is a labeled pill, “Details” / “Hide details”, like the PBS video player.
 - Expanded player: the whole day’s schedule in a scrolling list, opened at the current program; earlier programs are dimmed. WXXI News now uses its real full-day schedule from radio.lls.pbs.org (Nov 18, NPR Cadence; short inserts left out).
 - Long titles: the bold title scrolls; the stream name stays put with an ellipsis.
+- Playing tiles: at least 12px between the Live badge + logo row and the Now Playing badge (they were touching). On tiles up to 300px wide, the Now Playing badge replaces the “Next” line while playing, since all three lines don’t fit with proper spacing.
 
 ## R4 (Nov 20, 2026)
 

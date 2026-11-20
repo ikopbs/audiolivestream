@@ -935,6 +935,10 @@ html,body{max-width:100%;overflow-x:hidden}
 .bp.th-light .bp-det:hover{color:var(--medium-blue);border-color:var(--medium-blue)}
 .sch-scroll{max-height:240px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:6px}
 .sch-list div.past{opacity:.55}
+/* playing tiles: keep clear space between the header row (Live badge + logo) and the Now Playing badge */
+.tile-i{gap:12px}
+.t-txt .np-badge{margin-bottom:8px}
+@container (max-width:300px){.t-txt .np-badge ~ .t-ep{display:none}}
 /* ===== Notes drawer ===== */
 .notes{width:400px;border-left:1px solid var(--pt-line);background:var(--pt-bg);overflow-y:auto;min-height:0}
 .notes[hidden]{display:none}
