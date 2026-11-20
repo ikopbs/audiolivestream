@@ -2,7 +2,7 @@
 
 Each round is tagged as a GitHub release (R1, R2, …). Options cut in a round are not deleted: add `?archive` to the URL (for example `index.html?archive#home`) to see them again in the notes panel, marked “Retired in R2”.
 
-## R5 (in progress, branch `r5`)
+## R5 (Nov 20, 2026)
 
 From the R3 UI fixes notes (Figma Read me › UI Fixes R3):
 - /livestream: a stream without a schedule gets one cell across the whole row, with no progress shading.
