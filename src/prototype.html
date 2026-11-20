@@ -1981,6 +1981,7 @@ const PLAYER_NOTE = { key:'bar', title:'Bottom player', sub:'Persists across pag
 function decCard(d) {
   const all = d.opts.map((o, i) => ({ o, k:o[4] || 'ABCD'[i], ret:isRetired(d.key, o[0]) }));
   const live = all.filter(x => !x.ret), ret = all.filter(x => x.ret), decided = live.length === 1;
+  if (decided && !ARCHIVE) return '';   // R3: only open choices are listed; decisions are in CHANGELOG.md and ?archive
   const btn = (x, extra) => `<button class="opt ${extra}" data-opt="${d.key}" data-val="${x.o[0]}" aria-pressed="${S.opt[d.key] === x.o[0]}"><span class="k">${x.k}</span><span><b>${x.o[1]}${x.o[3] && !decided && !x.ret ? '<span class="rec">Recommended</span>' : ''}</b>${x.o[2] ? `<span>${x.o[2]}</span>` : ''}</span></button>`;
   return `<section class="dec"><h3>${d.title}${decided ? '<span class="dec-tag">Decided</span>' : d.sub ? `<small>${d.sub}</small>` : ''}</h3>
     <div class="opts">${live.map(x => btn(x, decided ? 'decided' : '')).join('')}${ARCHIVE && ret.length ? `<p class="n-ret">Retired in R2</p>${ret.map(x => btn(x, 'retired')).join('')}` : ''}</div>
@@ -1993,7 +1994,7 @@ function renderNotes() {
   const seen = new Set();
   box.innerHTML = `<p class="n-intro">${{ home:'PBS.org home, localized to WXXI. Press a radio tile to start the bottom player, then move between pages.', livestream:'pbs.org/livestream for WXXI. Radio streams appear with their real program schedules.', station:'WTJX’s Bento site with the Bento station header. WTJX has two streams: FM 93.1 and AFRO (HD2). AFRO publishes no schedule, so it shows the stream’s frequency instead of a program. Option B shows wtjx.org’s Live Stream page; the others show the home page.', lab:'Every station with radio, in every place a logo appears. Use the filters to find problem logos, and the choices below to fix them.' }[S.page]}</p>
     ${decs.filter(d => { if (seen.has(d.key)) return false; seen.add(d.key); return true; }).map(decCard).join('')}
-    <p class="n-arch">${ARCHIVE ? 'Showing options retired in R2. <a href="?#' + S.page + '">Hide them</a>' : 'Options retired after the R2 review are hidden. <a href="?archive#' + S.page + '">Show them</a>'}</p>
+    <p class="n-arch">${ARCHIVE ? 'Showing decided and retired options. <a href="?#' + S.page + '">Hide them</a>' : 'Decided and retired options are hidden. <a href="?archive#' + S.page + '">Show them</a>'}</p>
     <h4 class="n-h">Scenarios</h4>
     <p class="n-intro" style="margin-top:-6px">Scenarios change what the prototype pretends is happening. Pick one, then press play on a radio stream (a home page radio tile, a radio row on Live TV, or the station widget). Your choice stays until you change it or press “Use recommended.”</p>
     <section class="dec scen">

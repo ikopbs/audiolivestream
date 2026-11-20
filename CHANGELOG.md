@@ -2,6 +2,10 @@
 
 Each round is tagged as a GitHub release (R1, R2, …). Options cut in a round are not deleted: add `?archive` to the URL (for example `index.html?archive#home`) to see them again in the notes panel, marked “Retired in R2”.
 
+## R3 (in progress, branch `r3`)
+
+- Notes panel lists only open choices. Decided options (one option left) are hidden with the retired ones; `?archive` shows both. (Mary, Nov 20.)
+
 ## R2 (Nov 20, 2026)
 
 From the Nov 19 R1 review with Mary (notes and annotated UI fixes on the Figma Read me page).
