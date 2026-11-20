@@ -1130,7 +1130,7 @@ if (!['card', 'embed', 'header', 'below'].includes(S.opt.widget)) S.opt.widget =
 // R2 (Nov 19 review): options that were not kept. They stay in the code and come back with ?archive in the URL.
 const ARCHIVE = /(^|[?&#])archive\b/.test(location.search + '&' + location.hash.slice(1));
 const RETIRED = { homeTile:['B','C'], navLive:['radio','tv'], av:['ask','end'], bar:['B','C','D'], marquee:['loop','off'], panelBg:['navy'],
-  imagery:['art'], label:['full','logo'], color:['station','genre'], logoSize:['box','height'], logoPad:['delivered'], logoVariant:['white','wcob'],
+  imagery:['art','scenery'], label:['full','logo'], color:['station','genre'], logoSize:['box','height'], logoPad:['delivered'], logoVariant:['white','wcob'],
   vizAccent:['purple','yellow'], livePlace:['section','grid'], liveClick:['banner','bar','drawer'], theme:['brand'], badge:['radio','dot'] };
 const isRetired = (k, v) => (RETIRED[k] || []).includes(v);
 if (S.opt.livePlace === 'rows') S.opt.livePlace = 'cells';
@@ -1976,7 +1976,7 @@ const IMAGERY_NOTE = { key:'imagery', title:'Tile and player imagery', sub:'Appl
       ['brand','Branded field','Stream colors, a broadcast-ring texture and the station logo. Works for every station with no new assets.',true],
       ['scenery','Station scenery photo','Uses the station-scenery image PBS already stores for some stations, dimmed like TV tiles. WTJX has none, so it falls back.'],
       ['art','Album art when the feed sends it','Music feeds sometimes include cover art (e.g. WABE, WUFT). Shown on the sample Classical stream; everything else falls back.'] ],
-      why:'Radio has no listing images. The branded field works for every station with no new assets; B is here to show how scenery photos would look where a station has them (WTJX has none, so it falls back).' };
+      why:'Radio has no listing images, and scenery photos exist for only some stations (WTJX has none). The branded field works for every station with no new assets.' };
 const LABEL_NOTE = { key:'label', title:'Stream name in the logo tile', sub:'Turn on Long names below', opts:[
       ['derived','Short label','A short name entered by the station (max 12 characters). When there isn’t one, we derive it from the feed name: drop the call letters, frequencies and anything in parentheses, then take the first short phrase.',true],
       ['full','Full feed name','The whole name, wrapped to 3 lines. Fine for “WXXI News,” unreadable for “WUFT 89.1: NPR News/Talk in North Central Florida.”'],
@@ -2014,7 +2014,7 @@ const PLAYER_NOTE = { key:'bar', title:'Bottom player', sub:'Persists across pag
   why:'People already use the PBS video player, so the same icons in the same places mean nothing new to learn. There’s no seek bar: live radio can’t be scrubbed, and pause means stop and rejoin live.' };
 
 // Decided items read as notes, not options: no letters, badges or buttons.
-const DECIDED_IN = { badge:'R2 UI fixes · Nov 20', livePlace:'R2 · Nov 20' };
+const DECIDED_IN = { badge:'R2 UI fixes · Nov 20', livePlace:'R2 · Nov 20', imagery:'R4 · Nov 20' };
 const isDecided = (d) => d.opts.filter(o => !isRetired(d.key, o[0])).length === 1;
 function decNote(d) {
   const o = d.opts.find(x => !isRetired(d.key, x[0]));
