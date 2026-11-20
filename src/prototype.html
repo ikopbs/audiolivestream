@@ -1080,7 +1080,7 @@ const byId = (id) => SN(ALL.find(s => s.id === id));
 /* ---------- state ---------- */
 const DEF = {
   page:'home', device:'desktop', notes: window.innerWidth > 900,
-  opt:{ homeTile:'A', imagery:'brand', livePlace:'grid', liveClick:'stage', bar:'A', av:'pause', widget:'card', theme:'light', label:'derived', color:'shade', viz:'ambient', badge:'dot', marquee:'once', vizAccent:'coral', panelBg:'bluegray', navLive:'live', logoSize:'area', logoPad:'trimmed', logoVariant:'chain' },
+  opt:{ homeTile:'A', imagery:'brand', livePlace:'cells', liveClick:'stage', bar:'A', av:'pause', widget:'card', theme:'light', label:'derived', color:'shade', viz:'ambient', badge:'dot', marquee:'once', vizAccent:'coral', panelBg:'bluegray', navLive:'live', logoSize:'area', logoPad:'trimmed', logoVariant:'chain' },
   scen:{ health:'live', sched:'normal', names:'typical', streams:2 }
 };
 let S = JSON.parse(JSON.stringify(DEF));
@@ -1091,9 +1091,9 @@ if (!['card', 'embed', 'header', 'below'].includes(S.opt.widget)) S.opt.widget =
 const ARCHIVE = /(^|[?&#])archive\b/.test(location.search + '&' + location.hash.slice(1));
 const RETIRED = { homeTile:['B','C'], navLive:['radio','tv'], av:['ask','end'], bar:['B','C','D'], marquee:['loop','off'], panelBg:['navy'],
   imagery:['art'], label:['full','logo'], color:['station','genre'], logoSize:['box','height'], logoPad:['delivered'], logoVariant:['white','wcob'],
-  vizAccent:['purple','yellow'], livePlace:['section'], liveClick:['banner','bar','drawer'], theme:['brand'], badge:['radio'] };
+  vizAccent:['purple','yellow'], livePlace:['section','grid'], liveClick:['banner','bar','drawer'], theme:['brand'], badge:['radio'] };
 const isRetired = (k, v) => (RETIRED[k] || []).includes(v);
-if (S.opt.livePlace === 'rows') S.opt.livePlace = 'grid';
+if (S.opt.livePlace === 'rows') S.opt.livePlace = 'cells';
 if (!ARCHIVE) for (const k of Object.keys(RETIRED)) if (isRetired(k, S.opt[k])) S.opt[k] = DEF.opt[k];
 const LAB = {{json:lab}};
 // Custom stream logo test (WETA isn't in the radio data; sample entry).
@@ -1893,10 +1893,10 @@ const NOTES = {
       ['yellow','Yellow','The schedule’s time color. Bright; best kept to a small share of the field.'] ],
       why:'Coral is already the accent PBS uses next to its blues (the Now Playing badge, footer headings).' },
     { key:'livePlace', title:'Where radio sits on /livestream', opts:[
-      ['grid','Rows in the schedule grid','Radio streams get rows under the TV channels, below a “WXXI Radio” label, with real program schedules on the same timeline. Selecting one gives it the grid’s selected treatment.',true],
+      ['grid','Rows in the schedule grid','Radio streams get rows under the TV channels, below a “WXXI Radio” label, with real program schedules on the same timeline. Selecting one gives it the grid’s selected treatment.'],
       ['section','Separate section below the grid','A “WXXI Live Radio” list of radio cards under the TV schedule. Easier to scan on a phone, but radio reads as an add-on.',false,'R1'],
-      ['cells','Grid rows with what’s coming up','Same rows and cells as the TV channels, but each radio program gets its own cell, the width of a 30-minute TV listing: what’s on now, then the next three with their start times. Streams without a schedule show one cell.',false,'B'] ],
-      why:'A puts radio on the same timeline as TV, so a 2-hour program like All Things Considered fills the whole visible row and nothing upcoming shows. B always shows what’s next, but its cells don’t line up with the times across the top.' },
+      ['cells','Grid rows with what’s coming up','Same rows and cells as the TV channels, but each radio program gets its own cell, the width of a 30-minute TV listing: what’s on now, then the next three with their start times. Streams without a schedule show one cell.',true,'B'] ],
+      why:'Radio programs often run for hours (All Things Considered is 2 hours, Classical 24 runs all night), so on the timeline nothing upcoming would show. One cell per program always shows what’s next; start times are on each upcoming cell because the cells don’t line up with the times across the top.' },
     { key:'liveClick', title:'What happens when you press play on radio', opts:[
       ['stage','The player area becomes the radio','The video player area swaps to the radio player area: program, time range, progress and what’s next. The bottom player takes over once you scroll past it or leave the page.',true],
       ['banner','The player area shrinks to a radio banner','Same idea, but the 16:9 area collapses to a short banner so the schedule moves up. The page jumps when switching between TV and radio.'],

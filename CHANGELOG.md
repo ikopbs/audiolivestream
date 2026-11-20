@@ -11,7 +11,7 @@ From the Nov 19 R1 review with Mary (notes and annotated UI fixes on the Figma R
 **Narrowed:**
 - Tile and player imagery: branded field (recommended) and station scenery (for demonstration). Album art retired.
 - Animation: all four kept; ambient color drift now recommended; its note removed.
-- Where radio sits on /livestream: grid rows on the timeline (recommended) and a new option B, grid rows where each program gets its own cell (now + next three, with start times) so upcoming shows are always visible. The separate radio section is retired.
+- Where radio sits on /livestream: decided B, grid rows where each program gets its own cell (now + next three, with start times) so upcoming shows are always visible. A (programs on the timeline) and the separate radio section are retired.
 - Station theme: PBS light (recommended) and PBS dark for launch. Station brand retired. In PBS light, the expanded player and the stream-list popups use Fog.
 - Station site widget: all four options kept.
 
