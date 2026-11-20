@@ -878,16 +878,6 @@ span.illus,.illus{display:inline-block!important;width:auto!important;font-size:
 /* PBS light: expanded player and stream-list popups on Neutrals / Fog */
 .bp.th-light .bp-panel{background:var(--fog);--bp-line:var(--rain)}
 .hdr-pop .wdg.th-light,.b-np-menu .wdg.th-light{background:var(--fog);border-color:var(--rain);--w-line:var(--rain)}
-/* radio tile rows on /livestream */
-.rrows{padding:8px var(--si) 40px}
-.embed .rrows{padding:8px 24px 24px}
-.rrow{margin-bottom:28px}
-.rrow h3{margin:0 0 12px;font-size:18px;line-height:1.25;font-weight:700}
-.tile.up{cursor:default}
-.tile.up:hover{scale:1;outline-color:transparent;border-radius:14px}
-.tile.up .field{opacity:.6}
-.up-time{font-size:11px;font-weight:700;line-height:1.5;text-transform:uppercase;color:var(--white)}
-@container dev (max-width:767px){.rrow h3{font-size:16px}}
 /* notes: decided and retired options */
 .dec-tag{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--midnight);background:var(--fog);border-radius:3px;padding:1px 5px;white-space:nowrap}
 .opt.decided{cursor:default}
@@ -1103,6 +1093,7 @@ const RETIRED = { homeTile:['B','C'], navLive:['radio','tv'], av:['ask','end'], 
   imagery:['art'], label:['full','logo'], color:['station','genre'], logoSize:['box','height'], logoPad:['delivered'], logoVariant:['white','wcob'],
   vizAccent:['purple','yellow'], livePlace:['section'], liveClick:['banner','bar','drawer'], theme:['brand'], badge:['radio'] };
 const isRetired = (k, v) => (RETIRED[k] || []).includes(v);
+if (S.opt.livePlace === 'rows') S.opt.livePlace = 'grid';
 if (!ARCHIVE) for (const k of Object.keys(RETIRED)) if (isRetired(k, S.opt[k])) S.opt[k] = DEF.opt[k];
 const LAB = {{json:lab}};
 // Custom stream logo test (WETA isn't in the radio data; sample entry).
@@ -1391,15 +1382,23 @@ function grid(stn = 'WXXI') {
   const radioRows = sts.map(st => { const sel = radioSel(st.id);
     let ev = st.sched ? [...st.sched] : [{ s:t0 - 3600e3, e:t0 + 4 * 3600e3, t:st.name, nometa:true }];
     if (st.sched) { const filled = []; let c = t0 - 3600e3; for (const e of ev) { if (e.s > c) filled.push({ s:c, e:e.s, t:'No program listed', gap:true }); filled.push(e); c = Math.max(c, e.e); } if (c < t0 + 4 * 3600e3) filled.push({ s:c, e:t0 + 4 * 3600e3, t:'No program listed', gap:true }); ev = filled; }
+    // Option B: one cell per program, the same width as a 30-minute TV listing, so what's next is visible even when the current program runs for hours.
+    let place = pos, prog = pg;
+    if (S.opt.livePlace === 'cells') {
+      const ci = ev.findIndex(e => NOW >= e.s && NOW < e.e);
+      ev = [ev[ci], ...ev.slice(ci + 1).filter(e => !e.gap)].filter(Boolean).slice(0, 4);
+      place = (s, e) => { const i = ev.findIndex(x => x.s === s && x.e === e); return `left:calc(var(--ppm)*${i * 30});width:calc(var(--ppm)*30)`; };
+      prog = (s, e) => NOW > s && NOW < e ? `<span class="pg" style="width:calc(var(--ppm)*${30 * (NOW - s) / (e - s)})"></span>` : '';
+    }
     return `<div class="ch radio ${sel ? 'sel' : ''}"><div class="ch-btn"><button data-play="${st.id}" aria-label="${isPlaying(st.id) ? 'Pause' : 'Listen to'} ${esc(st.name)}">${lockup(st, 18)}</button></div>
-    <div class="lst">${ev.map(e => { const p = pos(e.s, e.e); if (!p) return ''; const now = NOW >= e.s && NOW < e.e;
+    <div class="lst">${ev.map(e => { const p = place(e.s, e.e); if (!p) return ''; const now = NOW >= e.s && NOW < e.e;
       const title = now && st.item ? (st.item.composer ? st.item.composer + ': ' : '') + st.item.title : e.t;
-      const d = now ? (P.id === st.id && P.status === 'offline' ? 'Stream offline' : st.item ? st.item.artist : e.nometa ? 'No schedule available' : e.gap ? 'No program information' : remain(e.e)) : Math.round((e.e - e.s) / 60000) + ' minutes';
-      return `<button class="li ${now ? 'now' : ''}" style="${p}" ${now ? `data-play="${st.id}" aria-label="${isPlaying(st.id) ? 'Pause' : 'Listen to'} ${esc(st.name)}: ${esc(title)}"` : 'tabindex="-1"'}>${pg(e.s, e.e)}${now && sel ? '<span class="np">Now playing</span>' : ''}<b>${esc(title)}</b><span class="d">${esc(d)}</span>${now && !sel ? SVG.ibPlay : ''}</button>`; }).join('')}</div></div>`; }).join('');
+      const d = now ? (P.id === st.id && P.status === 'offline' ? 'Stream offline' : st.item ? st.item.artist : e.nometa ? 'No schedule available' : e.gap ? 'No program information' : remain(e.e)) : (S.opt.livePlace === 'cells' ? fmt(e.s, tzOf(st)) + ' · ' : '') + Math.round((e.e - e.s) / 60000) + ' minutes';
+      return `<button class="li ${now ? 'now' : ''}" style="${p}" ${now ? `data-play="${st.id}" aria-label="${isPlaying(st.id) ? 'Pause' : 'Listen to'} ${esc(st.name)}: ${esc(title)}"` : 'tabindex="-1"'}>${prog(e.s, e.e)}${now && sel ? '<span class="np">Now playing</span>' : ''}<b>${esc(title)}</b><span class="d">${esc(d)}</span>${now && !sel ? SVG.ibPlay : ''}</button>`; }).join('')}</div></div>`; }).join('');
   const tl = [0, 30, 60, 90].map(m => `<span style="left:calc(var(--chw) + var(--ppm)*${m} + 8px)">${fmtS(t0 + m * 60000, STN[stn].tz)}</span>`).join('');
   return `<div class="grid-scroll"><div class="grid"><div class="tl"><span class="day">Wed 11/18 ▾</span>${tl}<i class="nowm" style="left:calc(var(--chw) + var(--ppm)*5)"></i></div>
     ${tvRows}
-    ${S.opt.livePlace === 'grid' && sts.length ? `<div class="grid-div">${stn} Radio</div>${radioRows}` : ''}
+    ${(S.opt.livePlace === 'grid' || S.opt.livePlace === 'cells') && sts.length ? `<div class="grid-div">${stn} Radio</div>${radioRows}` : ''}
   </div></div>`;
 }
 function radioSection(stn = 'WXXI') {
@@ -1416,20 +1415,7 @@ function liveBlock(stn) {
     <section class="sched"><div class="sched-h"><h2><span class="live-dot"></span>${stn} Live TV Schedule</h2><a>On Air Schedule ↗</a><span class="tz">Timezone: ${STN[stn].tzName}</span></div>
       ${grid(stn)}
       <p class="disclaim">Livestreams may follow a different schedule than your on-air broadcast.${TVS[stn][0].sample ? ' WTJX TV listings in this prototype are samples.' : ''}</p></section>
-    ${S.opt.livePlace === 'rows' ? radioTileRows(stn) : S.opt.livePlace === 'section' ? radioSection(stn) : ''}`;
-}
-// Option B on /livestream: a row per stream, like the Live TV rows: Now, then what's next from its schedule.
-function upTile(st, e, tz) {
-  return `<div class="tile radio up" role="listitem" aria-label="${esc(e.t)}, ${fmt(e.s, tz)}">${field(st)}
-    <span class="tile-i"><span class="tile-name"><span class="up-time">${fmt(e.s, tz)}</span></span>
-    <span class="t-txt"><span class="t-show">${esc(e.t)}</span><span class="t-ep">${Math.round((e.e - e.s) / 60000)} minutes</span></span></span></div>`;
-}
-function radioTileRows(stn) {
-  const sts = streamsFor(stn); if (!sts.length) return '';
-  return `<section class="rrows" aria-label="${stn} Live Radio"><div class="sched-h"><h2><span class="live-dot"></span>${stn} Live Radio</h2></div>
-    ${sts.map(st => { const tz = tzOf(st), up = (st.sched || []).filter(e => e.s > nowAt(st)).slice(0, 4);
-      return `<div class="rrow"><h3>${esc(st.name)}</h3><div class="tiles" role="list">${radioTile(st)}${up.map(e => upTile(st, e, tz)).join('')}</div></div>`; }).join('')}
-  </section>`;
+    ${S.opt.livePlace === 'section' ? radioSection(stn) : ''}`;
 }
 function pageLive() {
   return `<div class="site">${nav()}${liveBlock('WXXI')}${footer()}</div>`;
@@ -1909,8 +1895,8 @@ const NOTES = {
     { key:'livePlace', title:'Where radio sits on /livestream', opts:[
       ['grid','Rows in the schedule grid','Radio streams get rows under the TV channels, below a “WXXI Radio” label, with real program schedules on the same timeline. Selecting one gives it the grid’s selected treatment.',true],
       ['section','Separate section below the grid','A “WXXI Live Radio” list of radio cards under the TV schedule. Easier to scan on a phone, but radio reads as an add-on.',false,'R1'],
-      ['rows','Radio rows with what’s coming up','Under the TV schedule, each stream gets a row of tiles like the Live TV row: what’s on now, then the next programs from its schedule. Streams without a schedule show just the Now tile.',false,'B'] ],
-      why:'The grid puts radio on the same timeline as TV, which is what the spec asks for (and what Local Public does). Tile rows are easier to scan on a phone and show what’s coming up, but radio sits apart from the TV schedule.' },
+      ['cells','Grid rows with what’s coming up','Same rows and cells as the TV channels, but each radio program gets its own cell, the width of a 30-minute TV listing: what’s on now, then the next three with their start times. Streams without a schedule show one cell.',false,'B'] ],
+      why:'A puts radio on the same timeline as TV, so a 2-hour program like All Things Considered fills the whole visible row and nothing upcoming shows. B always shows what’s next, but its cells don’t line up with the times across the top.' },
     { key:'liveClick', title:'What happens when you press play on radio', opts:[
       ['stage','The player area becomes the radio','The video player area swaps to the radio player area: program, time range, progress and what’s next. The bottom player takes over once you scroll past it or leave the page.',true],
       ['banner','The player area shrinks to a radio banner','Same idea, but the 16:9 area collapses to a short banner so the schedule moves up. The page jumps when switching between TV and radio.'],
