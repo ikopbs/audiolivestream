@@ -925,6 +925,16 @@ html,body{max-width:100%;overflow-x:hidden}
 .dn-what b{font-weight:700}
 .dn-why{margin:0;font-size:12px;line-height:1.5;color:var(--pt-sub)}
 .dn-when{margin:0;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate)}
+
+/* ===== R5 (R3 UI fixes) ===== */
+.bp-det{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px 0 14px;border:1px solid var(--bp-fg);border-radius:9999px;background:none;color:var(--bp-fg);font:inherit;font-size:13px;font-weight:700;line-height:1;cursor:pointer;flex:none;white-space:nowrap}
+.bp-det svg{width:12px;height:12px;fill:currentColor}
+.bp-det[aria-expanded="true"] svg{rotate:180deg}
+.bp-det:hover{color:var(--bp-hover);border-color:var(--bp-hover)}
+.bp.th-light .bp-det{color:var(--pbs-blue);border-color:var(--pbs-blue)}
+.bp.th-light .bp-det:hover{color:var(--medium-blue);border-color:var(--medium-blue)}
+.sch-scroll{max-height:240px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;padding-right:6px}
+.sch-list div.past{opacity:.55}
 /* ===== Notes drawer ===== */
 .notes{width:400px;border-left:1px solid var(--pt-line);background:var(--pt-bg);overflow-y:auto;min-height:0}
 .notes[hidden]{display:none}
@@ -1018,6 +1028,7 @@ const SVG = {
   baPause:'<svg class="ba" viewBox="0 0 32 32" aria-hidden="true"><rect x="3.33" width="8.2" height="32"/><rect x="20.56" width="8.2" height="32"/></svg>',
   baPlay:'<svg class="ba" viewBox="0 0 32 32" aria-hidden="true"><path d="M28.21 15.43c.41.27.41.88 0 1.15L4.52 31.89c-.45.29-1.05-.03-1.05-.57V.68c0-.54.6-.86 1.05-.57z"/></svg>',
   baVol:'<svg class="ba" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 8.93v6.13c0 .25.1.49.27.66.18.18.41.28.66.28h4.01c.25 0 .49.1.66.27l4.8 4.8c.13.13.3.22.48.26.18.03.37.02.54-.05.17-.07.32-.19.42-.34.1-.15.16-.33.16-.52V3.58c0-.18-.05-.36-.16-.52a.93.93 0 0 0-.42-.34.93.93 0 0 0-1.02.2l-4.8 4.8a.93.93 0 0 1-.66.27H.93a.93.93 0 0 0-.66.28.93.93 0 0 0-.27.66zM18 12a5.98 5.98 0 0 0-1.74-4.22.93.93 0 0 0-1.6.66v7.12a.93.93 0 0 0 1.6.66A5.98 5.98 0 0 0 18 12zM14.67 1.54v.84c0 .19.06.37.16.53.11.15.26.27.43.34a9.34 9.34 0 0 1 6.07 8.75 9.34 9.34 0 0 1-6.07 8.75.93.93 0 0 0-.59.87v.84a.93.93 0 0 0 1.23.89A12 12 0 0 0 24 12 12 12 0 0 0 15.9.65a.93.93 0 0 0-1.23.89z"/></svg>',
+  baMute:'<svg class="ba" viewBox="0 0 24 24" aria-hidden="true"><path d="M0 8.93v6.13c0 .25.1.49.27.66.18.18.41.28.66.28h4.01c.25 0 .49.1.66.27l4.8 4.8c.13.13.3.22.48.26.18.03.37.02.54-.05.17-.07.32-.19.42-.34.1-.15.16-.33.16-.52V3.58c0-.18-.05-.36-.16-.52a.93.93 0 0 0-.42-.34.93.93 0 0 0-1.02.2l-4.8 4.8a.93.93 0 0 1-.66.27H.93a.93.93 0 0 0-.66.28.93.93 0 0 0-.27.66z"/><path d="M15.4 8.4l7 7m0-7l-7 7" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>',
   baCaret:'<svg class="ba" viewBox="0 0 24 24" aria-hidden="true"><path d="M11.63 6.14a.55.55 0 0 1 .74 0l11.45 10.28c.37.34.13.96-.37.96H.55c-.5 0-.74-.62-.37-.96z"/></svg>',
   baClose:'<svg class="ba" viewBox="0 0 24 24" aria-hidden="true"><path d="M13.66 12l9.8-9.8a1.3 1.3 0 0 0 0-1.83 1.3 1.3 0 0 0-1.83 0l-9.8 9.97L2.2.54A1.3 1.3 0 0 0 .37.54a1.3 1.3 0 0 0 0 1.83l9.8 9.8-9.8 9.63a1.3 1.3 0 0 0 0 1.83 1.3 1.3 0 0 0 1.83 0L12 13.83l9.8 9.8a1.3 1.3 0 0 0 1.83 0 1.3 1.3 0 0 0 0-1.83z"/></svg>',
   /* DS Icon Button (36px, 2px outline) with the Play icon; Pause uses the same frame */
@@ -1074,7 +1085,7 @@ const RADIO = {
   WXXI: [
     { id:'st726', station:'WXXI', name:'WXXI News', short:'News', freq:'105.9 FM · 1370 AM', c1:'#0f1e8c', c2:'#2638c4', real:true,
       src:'https://playerservices.streamtheworld.com/api/livestream-redirect/WXXIAM.mp3', scenery:IMG.wxxiScenery,
-      sched:[ {s:Z(19),e:Z(21),t:'Here & Now'}, {s:Z(21),e:Z(23),t:'All Things Considered'}, {s:Z(23),e:Z(23,30),t:'The Daily'}, {s:Z(23,30),e:Z(24),t:'Marketplace'}, {s:Z(24),e:Z(25),t:'The World'}, {s:Z(25),e:Z(26),t:'1A Plus'} ] },
+      sched:[ {s:Z(5),e:Z(10),t:'BBC World Service'}, {s:Z(10),e:Z(10,19),t:'Morning Edition'}, {s:Z(11,51),e:Z(11,59),t:'Marketplace Morning Report'}, {s:Z(12),e:Z(13,51),t:'Morning Edition'}, {s:Z(13,51),e:Z(13,59),t:'Marketplace Morning Report'}, {s:Z(14),e:Z(14,1),t:'BBC Newshour'}, {s:Z(15),e:Z(17),t:'1A'}, {s:Z(17),e:Z(18),t:'Connections with Evan Dawson'}, {s:Z(18),e:Z(19),t:'Fresh Air'}, {s:Z(19),e:Z(21),t:'Here & Now'}, {s:Z(21),e:Z(23),t:'All Things Considered'}, {s:Z(23),e:Z(23,30),t:'The Daily'}, {s:Z(23,30),e:Z(24),t:'Marketplace'}, {s:Z(24),e:Z(25),t:'The World'}, {s:Z(25),e:Z(26),t:'1A Plus'}, {s:Z(26),e:Z(27),t:'Connections with Evan Dawson'}, {s:Z(27),e:Z(28),t:'The Capitol Pressroom'}, {s:Z(28),e:Z(28,30),t:'The Newsroom'}, {s:Z(28,30),e:Z(29),t:'The Global Story'} ] },  // full day from radio.lls.pbs.org (NPR Cadence), Nov 18; short inserts left out
     { id:'wxxi-classical', station:'WXXI', name:'WXXI Classical', short:'Classical', freq:'91.5 FM', c1:'#2a0a63', c2:'#4e05ac', illus:true, scenery:IMG.wxxiScenery,
       sched:[ {s:Z(17),e:Z(23),t:'Classical 24'}, {s:Z(23),e:Z(24),t:'Performance Today'}, {s:Z(24),e:Z(29),t:'Classical 24'} ],
       item:{ title:'Forgotten Melodies: Festive Dance', composer:'Nikolai Medtner', artist:'Kenny Broberg, piano', art:true } },
@@ -1425,8 +1436,8 @@ function grid(stn = 'WXXI') {
     if (S.opt.livePlace === 'cells') {
       const ci = ev.findIndex(e => NOW >= e.s && NOW < e.e);
       ev = [ev[ci], ...ev.slice(ci + 1).filter(e => !e.gap)].filter(Boolean).slice(0, 4);
-      place = (s, e) => { const i = ev.findIndex(x => x.s === s && x.e === e); return `left:calc(var(--ppm)*${i * 30});width:calc(var(--ppm)*30)`; };
-      prog = (s, e) => NOW > s && NOW < e ? `<span class="pg" style="width:calc(var(--ppm)*${30 * (NOW - s) / (e - s)})"></span>` : '';
+      place = (s, e) => { const i = ev.findIndex(x => x.s === s && x.e === e); return ev.length === 1 ? 'left:0;width:calc(var(--ppm)*120)' : `left:calc(var(--ppm)*${i * 30});width:calc(var(--ppm)*30)`; };
+      prog = (s, e) => ev.length === 1 && ev[0].nometa ? '' : NOW > s && NOW < e ? `<span class="pg" style="width:calc(var(--ppm)*${(ev.length === 1 ? 120 : 30) * (NOW - s) / (e - s)})"></span>` : '';
     }
     return `<div class="ch radio ${sel ? 'sel' : ''}"><div class="ch-btn"><button data-play="${st.id}" aria-label="${isPlaying(st.id) ? 'Pause' : 'Listen to'} ${esc(st.name)}">${lockup(st, 18)}</button></div>
     <div class="lst">${ev.map(e => { const p = place(e.s, e.e); if (!p) return ''; const now = NOW >= e.s && NOW < e.e;
@@ -1640,13 +1651,13 @@ function barHTML(st, o) {
   const on = o.spec || isPlaying(st.id), v = o.variant;
   const pp = on ? SVG.baPause : SVG.baPlay, ppLabel = `${on ? 'Pause' : 'Play'} ${esc(st.name)}`;
   const ppBtn = `<button class="bp-ic bp-pp" ${o.spec ? 'tabindex="-1"' : `data-play="${st.id}"`} aria-label="${ppLabel}">${pp}</button>`;
-  const vol = `<span class="bp-volw"><button class="bp-ic" ${o.spec ? 'tabindex="-1"' : 'data-mute="1"'} aria-label="${P.vol ? 'Mute' : 'Unmute'}">${SVG.baVol}</button>${o.spec ? '' : `<input id="vol" type="range" min="0" max="1" step="0.05" value="${P.vol}" aria-label="Volume">`}</span>`;
+  const vol = `<span class="bp-volw"><button class="bp-ic" ${o.spec ? 'tabindex="-1"' : 'data-mute="1"'} aria-label="${P.vol ? 'Mute' : 'Unmute'}">${P.vol ? SVG.baVol : SVG.baMute}</button>${o.spec ? '' : `<input id="vol" type="range" min="0" max="1" step="0.05" value="${P.vol}" aria-label="Volume">`}</span>`;
   const prog = o.status === 'playing' && o.pct !== null ? `<div class="bp-prog" aria-hidden="true"><i style="width:${o.pct}%"></i></div>` : '';
   const art = `<span class="bp-art">${field(st, S.opt.imagery === 'art' ? 'art' : 'brand')}${lockup(st, 11, false, true)}${v === 'C' ? `<button class="art-pp" ${o.spec ? 'tabindex="-1"' : `data-play="${st.id}"`} aria-label="${ppLabel}">${pp}</button>` : ''}</span>`;
   const mq = (k, s, tag = 'span', cls = '') => `<${tag} class="mq ${cls}" data-k="${k}"><span class="mq-in">${esc(s)}</span></${tag}>`;
   const text = `<span class="bp-t"><span class="over">${liveBadge(true)}${mq('sn', st.name)}</span>${mq('t', o.line1, 'b')}${mq('s', o.line2, 'span', 'l2')}</span>`;
   const left = `<div class="bp-l" ${o.spec ? '' : 'data-expand="1"'}>${art}${text}</div>`;
-  const right = `<div class="bp-r">${v === 'B' || v === 'C' ? vol : ''}<button class="bp-ic bp-exp" ${o.spec ? 'tabindex="-1"' : 'data-expand="1"'} aria-expanded="${!!P.expanded && !o.spec}" aria-label="${P.expanded ? 'Hide' : 'Show'} schedule and streams">${SVG.baCaret}</button><button class="bp-ic" ${o.spec ? 'tabindex="-1"' : 'data-closebar="1"'} aria-label="Stop and close player">${SVG.baClose}</button></div>`;
+  const right = `<div class="bp-r">${v === 'B' || v === 'C' ? vol : ''}<button class="bp-det bp-exp" ${o.spec ? 'tabindex="-1"' : 'data-expand="1"'} aria-expanded="${!!P.expanded && !o.spec}"><span>${P.expanded && !o.spec ? 'Hide details' : 'Details'}</span>${SVG.baCaret}</button><button class="bp-ic" ${o.spec ? 'tabindex="-1"' : 'data-closebar="1"'} aria-label="Stop and close player">${SVG.baClose}</button></div>`;
   if (v === 'B') return `<div class="bp-bar v-B">${prog}${left}${ppBtn}${right}</div>`;
   if (v === 'C') return `<div class="bp-bar v-C">${prog}${left}${right}</div>`;
   return `<div class="bp-bar v-A">${prog}${ppBtn}${vol}${left}${right}</div>`;
@@ -1657,7 +1668,7 @@ function floatHTML(st, o) {
       <button class="bp-ic fl-x2" data-expand="1" aria-label="${P.expanded ? 'Hide' : 'Show'} schedule and streams">${SVG.baCaret}</button>
       <button class="bp-ic fl-x" data-closebar="1" aria-label="Stop and close player">${SVG.baClose}</button>
       <button class="bp-ic fl-pp" data-play="${st.id}" aria-label="${on ? 'Pause' : 'Play'} ${esc(st.name)}">${on ? SVG.baPause : SVG.baPlay}</button>
-      <button class="bp-ic fl-vol" data-mute="1" aria-label="${P.vol ? 'Mute' : 'Unmute'}">${SVG.baVol}</button><span class="fl-live">LIVE</span>
+      <button class="bp-ic fl-vol" data-mute="1" aria-label="${P.vol ? 'Mute' : 'Unmute'}">${P.vol ? SVG.baVol : SVG.baMute}</button><span class="fl-live">LIVE</span>
       ${o.status === 'playing' && o.pct !== null ? `<div class="bp-prog" aria-hidden="true"><i style="width:${o.pct}%"></i></div>` : ''}</div>
     <div class="fl-info" data-expand="1" style="cursor:pointer"><span class="over">${esc(st.name)}</span><b class="mq" data-k="ft"><span class="mq-in">${esc(o.line1)}</span></b><span class="l2 mq" data-k="fs"><span class="mq-in">${esc(o.line2)}</span></span></div></div>`;
 }
@@ -1678,7 +1689,7 @@ function bottomPlayer() {
   const o = { line1, line2, status:P.status, pct, variant };
   const panel = `<div class="bp-panel" ${P.expanded ? '' : 'inert'}><div class="bp-ph"><span>Now playing</span><button class="bp-ic" data-expand="1" aria-expanded="true" aria-label="Collapse player">${SVG.baCaret}</button></div><div class="bp-panel-in">
       <div class="np-sec"><div class="np-head"><span class="sq">${field(st, S.opt.imagery === 'art' ? 'art' : 'brand')}${lockup(st, 22)}</span><span class="tx"><b>${esc(n.title)}</b><span>${esc(st.name)} · ${esc(st.freq)}</span>${n.track ? `<span>${esc(n.sub)}</span>` : ''}</span></div></div>
-      <div class="np-sec"><h5>${st.sched ? `Today on ${esc(st.name)}` : 'Schedule'}</h5>${st.sched ? `<div class="sch-list">${st.sched.filter(e => e.e > NOW).slice(0, 4).map(e => `<div class="${NOW >= e.s && NOW < e.e ? 'cur' : ''}"><span>${NOW >= e.s && NOW < e.e ? 'Now' : fmtS(e.s, tz)}</span>${esc(e.t)}</div>`).join('')}</div>` : `<p style="margin:0;font-size:13px;line-height:1.5;color:var(--bp-sub)">No schedule available</p>`}</div>
+      <div class="np-sec"><h5>${st.sched ? `Today on ${esc(st.name)}` : 'Schedule'}</h5>${st.sched ? `<div class="sch-list sch-scroll">${st.sched.map(e => `<div class="${NOW >= e.s && NOW < e.e ? 'cur' : e.e <= NOW ? 'past' : ''}"><span>${NOW >= e.s && NOW < e.e ? 'Now' : fmtS(e.s, tz)}</span>${esc(e.t)}</div>`).join('')}</div>` : `<p style="margin:0;font-size:13px;line-height:1.5;color:var(--bp-sub)">No schedule available</p>`}</div>
       ${sib.length > 1 ? `<div class="np-sec"><h5>More from ${esc(st.station)} radio</h5><div class="other">${sib.filter(s => s.id !== st.id).map(s => { const m = nowOf(s); return `<button data-play="${s.id}" data-switch="1" aria-label="Play ${esc(s.name)}"><span class="sq">${field(s, 'brand')}</span><span class="t"><b>${esc(s.name)}</b><span>${esc(m.none ? s.freq : m.title)}</span></span>${IB(s.id, true)}</button>`; }).join('')}</div></div>` : ''}
     </div></div>`;
   el.innerHTML = `<div class="bp ${float ? 'float' : ''} ${P.expanded ? 'expanded' : ''} ${hide ? 'hidden' : ''} ${thc} ${!thc && S.opt.panelBg === 'bluegray' ? 'pbg' : ''}" role="region" aria-label="Radio player">
@@ -1686,6 +1697,7 @@ function bottomPlayer() {
     ${float ? floatHTML(st, o) : barHTML(st, o)}
   </div>`;
   fitLockups(el); marquee(el);
+  const sc = el.querySelector('.sch-scroll'), cu = sc && sc.querySelector('.cur'); if (sc && cu) sc.scrollTop = Math.max(0, cu.offsetTop - sc.offsetTop - 8);
   requestAnimationFrame(() => { const bar = el.querySelector('.bp-bar'); setBarH(hide || !bar || float ? 0 : bar.offsetHeight); });
 }
 // Logo artwork scales with its tile: shrink any lockup that doesn't fit 84% of its square.
@@ -1709,6 +1721,7 @@ function marquee(root, replay) {
   let offset = 0, first = true;
   for (const el of els) {
     const inner = el.firstElementChild; if (!inner) continue;
+    if (el.dataset.k === 'sn') { el.classList.remove('mq-on', 'mq-done', 'loop'); continue; }   // the stream name stays put (ellipsis); the title is what people need to read
     el.classList.remove('mq-on', 'mq-done', 'loop'); inner.style.animation = ''; inner.onanimationend = null;
     if (mode === 'off' || RM.matches) continue;
     const over = el.scrollWidth - el.clientWidth; if (over <= 2) continue;
@@ -2149,7 +2162,7 @@ document.addEventListener('change', (e) => {
   if (e.target.id === 'labSel') { S.lab.call = e.target.value; S.lab.stream = 0; render(); }
   if (e.target.dataset && e.target.dataset.lab === 'boxes') { S.lab.boxes = e.target.checked; render(); }
 });
-document.addEventListener('input', (e) => { if (e.target.id === 'vol') { P.vol = +e.target.value; if (P.vol) P.lastVol = P.vol; audC.volume = audP.volume = P.vol; } });
+document.addEventListener('input', (e) => { if (e.target.id === 'vol') { const was = !!P.vol; P.vol = +e.target.value; if (P.vol) P.lastVol = P.vol; audC.volume = audP.volume = P.vol; if (was !== !!P.vol) document.querySelectorAll('[data-mute]').forEach(b => { b.innerHTML = P.vol ? SVG.baVol : SVG.baMute; b.setAttribute('aria-label', P.vol ? 'Mute' : 'Unmute'); }); } });
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (dialog) { dialog = null; layer(); } else if (P.picker || P.hdrPop || P.navPop || P.npSw) { P.picker = P.hdrPop = P.navPop = P.npSw = false; render(); } else if (P.expanded) { P.expanded = false; bottomPlayer(); } } });
 window.addEventListener('hashchange', () => { const p = pageFromHash(); if (p !== S.page) setPage(p); });
 window.addEventListener('resize', () => { if (P.picker) positionPicker(); });

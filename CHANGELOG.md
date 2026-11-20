@@ -2,6 +2,15 @@
 
 Each round is tagged as a GitHub release (R1, R2, …). Options cut in a round are not deleted: add `?archive` to the URL (for example `index.html?archive#home`) to see them again in the notes panel, marked “Retired in R2”.
 
+## R5 (in progress, branch `r5`)
+
+From the R3 UI fixes notes (Figma Read me › UI Fixes R3):
+- /livestream: a stream without a schedule gets one cell across the whole row, with no progress shading.
+- Volume: mute state (speaker with an x) on every volume control; it also shows when the slider is dragged to zero.
+- Bottom player: the expand control is a labeled pill, “Details” / “Hide details”, like the PBS video player.
+- Expanded player: the whole day’s schedule in a scrolling list, opened at the current program; earlier programs are dimmed. WXXI News now uses its real full-day schedule from radio.lls.pbs.org (Nov 18, NPR Cadence; short inserts left out).
+- Long titles: the bold title scrolls; the stream name stays put with an ellipsis.
+
 ## R4 (Nov 20, 2026)
 
 - Tile and player imagery: decided A, the branded field. Station scenery photo retired (still under `?archive`).
