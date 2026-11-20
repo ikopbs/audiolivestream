@@ -2,7 +2,7 @@
 
 Each round is tagged as a GitHub release (R1, R2, …). Options cut in a round are not deleted: add `?archive` to the URL (for example `index.html?archive#home`) to see them again in the notes panel, marked “Retired in R2”.
 
-## R3 (in progress, branch `r3`)
+## R3 (Nov 20, 2026)
 
 - Notes panel: open choices stay at the top with letters and badges. Decided items move to a collapsed “Design decisions” section as plain notes (what the design does, why, and when it was decided), with no letters, badges or buttons. Retired options stay behind `?archive`. (Mary and Iko, Nov 20.)
 
