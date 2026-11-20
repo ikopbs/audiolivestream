@@ -4,7 +4,7 @@ Each round is tagged as a GitHub release (R1, R2, …). Options cut in a round a
 
 ## R3 (in progress, branch `r3`)
 
-- Notes panel lists only open choices. Decided options (one option left) are hidden with the retired ones; `?archive` shows both. (Mary, Nov 20.)
+- Notes panel: open choices stay at the top with letters and badges. Decided items move to a collapsed “Design decisions” section as plain notes (what the design does, why, and when it was decided), with no letters, badges or buttons. Retired options stay behind `?archive`. (Mary and Iko, Nov 20.)
 
 From the R2 UI fixes notes (Figma Read me › UI Fixes R2):
 - Player area: removed the “Watch WXXI TV instead” button.

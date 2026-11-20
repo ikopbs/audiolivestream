@@ -910,6 +910,21 @@ html,body{max-width:100%;overflow-x:hidden}
   .ch-btn button{min-height:100px}
 }
 @container (max-width:139px){.li .np{display:none}}
+
+/* notes: decided items as plain notes in a collapsible section */
+.n-decs{border-top:1px solid var(--pt-line);padding-top:6px}
+.n-decs>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;padding:8px 0;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--pt-sub)}
+.n-decs>summary::-webkit-details-marker{display:none}
+.n-decs>summary::before{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;rotate:-45deg;transition:rotate .15s;margin-right:2px}
+.n-decs[open]>summary::before{rotate:45deg}
+.n-decs>summary span{letter-spacing:0;font-weight:700}
+.n-decs-i{margin:0 0 10px;font-size:12px;line-height:1.5;color:var(--pt-sub)}
+.dnote{padding:12px 0;border-top:1px solid var(--pt-line);display:grid;gap:6px}
+.dnote h3{margin:0;font-size:13px;font-weight:700;color:var(--pt-text)}
+.dn-what{margin:0;font-size:12.5px;line-height:1.5;color:var(--pt-text)}
+.dn-what b{font-weight:700}
+.dn-why{margin:0;font-size:12px;line-height:1.5;color:var(--pt-sub)}
+.dn-when{margin:0;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--slate)}
 /* ===== Notes drawer ===== */
 .notes{width:400px;border-left:1px solid var(--pt-line);background:var(--pt-bg);overflow-y:auto;min-height:0}
 .notes[hidden]{display:none}
@@ -1126,7 +1141,7 @@ LAB.push({ call:'WETA', name:'WETA', city:'Arlington', state:'VA', sample:true, 
   { id:'weta-classical', name:'WETA Classical', call:'WETA', freq:'90.9 FM', now:'Sample listing', sub:'Custom logo uploaded by the station', sched:true,
     custom:{ uri:IMG.wetaCustom, W:300, H:52, bb:[0, 0, 300, 52], lum:1 } } ] });
 S.lab = { mode:'station', call:'WXXI', stream:0, filter:'all', boxes:false, pick:'first' };
-const P = { npSw:false, navPop:false, shift:0, swapUntil:0, id:null, status:'idle', sim:false, expanded:false, vol:0.8, pausedBy:null, drawer:false, picker:false, hdrPop:false };
+const P = { decOpen:false, npSw:false, navPop:false, shift:0, swapUntil:0, id:null, status:'idle', sim:false, expanded:false, vol:0.8, pausedBy:null, drawer:false, picker:false, hdrPop:false };
 const V = { ch:'WXXI', playing:true };   // /livestream TV player
 let stageVisible = false, toastTimer = null;
 const save = () => { try { localStorage.setItem('alsp', JSON.stringify({ opt:S.opt, scen:S.scen, device:S.device })); } catch (e) {} };
@@ -1912,7 +1927,7 @@ const NOTES = {
       ['coral','Coral','PBS’s warm accent (the Now Playing badge, footer headings). The most contrast with the blues.',true],
       ['purple','Purple','Stays cool and close to the blues. Subtle; reads as depth more than color.'],
       ['yellow','Yellow','The schedule’s time color. Bright; best kept to a small share of the field.'] ],
-      why:'Coral is already the accent PBS uses next to its blues (the Now Playing badge, footer headings).' },
+      why:'' },
     { key:'livePlace', title:'Where radio sits on /livestream', opts:[
       ['grid','Rows in the schedule grid','Radio streams get rows under the TV channels, below a “WXXI Radio” label, with real program schedules on the same timeline. Selecting one gives it the grid’s selected treatment.'],
       ['section','Separate section below the grid','A “WXXI Live Radio” list of radio cards under the TV schedule. Easier to scan on a phone, but radio reads as an add-on.',false,'R1'],
@@ -1925,7 +1940,7 @@ const NOTES = {
       ['drawer','Now-playing side panel','A panel with the stream’s full day and other streams; closing it leaves the bottom player. A new pattern for PBS.org (no side panels in the library).'] ],
       why:'On this page the player area is “what you’re tuned to,” so selecting a radio row behaves like selecting a TV row. It also gives room for what radio has: program, time left, up next.' },
     { key:'av', title:'When video starts during audio', sub:'Pick a TV row while listening', opts:[
-      ['pause','Video pauses the radio','',true], ['ask','Ask first',''], ['end','Video ends the radio',''] ], why:'' }
+      ['pause','Video pauses the radio',`The bottom player stays, showing “Paused while video plays,” with one tap to resume.`,true], ['ask','Ask first',''], ['end','Video ends the radio',''] ], why:'Nothing plays over anything else, and getting back is one tap. Live radio “resumes” at the live edge.' }
   ],
   station: [
     { key:'widget', title:'Station site widget', sub:'Replaces the current Bento audio player', opts:[
@@ -1998,6 +2013,13 @@ const PLAYER_NOTE = { key:'bar', title:'Bottom player', sub:'Persists across pag
   ['D','Reuse the Floating Video Player','The library’s Floating Video Player (402×335, bottom right) with the logo tile in place of the video image and LIVE in place of the time. Covers more of the page, but it’s an approved pattern.'] ],
   why:'People already use the PBS video player, so the same icons in the same places mean nothing new to learn. There’s no seek bar: live radio can’t be scrubbed, and pause means stop and rejoin live.' };
 
+// Decided items read as notes, not options: no letters, badges or buttons.
+const DECIDED_IN = { badge:'R2 UI fixes · Nov 20', livePlace:'R2 · Nov 20' };
+const isDecided = (d) => d.opts.filter(o => !isRetired(d.key, o[0])).length === 1;
+function decNote(d) {
+  const o = d.opts.find(x => !isRetired(d.key, x[0]));
+  return `<section class="dnote"><h3>${d.title}</h3><p class="dn-what"><b>${o[1]}.</b> ${o[2] || ''}</p>${d.why ? `<p class="dn-why">${d.why}</p>` : ''}<p class="dn-when">Decided ${DECIDED_IN[d.key] || 'R2 · Nov 19 review'}</p></section>`;
+}
 function decCard(d) {
   const all = d.opts.map((o, i) => ({ o, k:o[4] || 'ABCD'[i], ret:isRetired(d.key, o[0]) }));
   const live = all.filter(x => !x.ret), ret = all.filter(x => x.ret), decided = live.length === 1;
@@ -2013,8 +2035,11 @@ function renderNotes() {
   const decs = (S.page === 'lab' ? [...NOTES.lab, LABEL_NOTE, COLOR_NOTE] : [...(S.page === 'home' ? [...NOTES.home, NAV_NOTE, ...NOTES.home2] : S.page === 'livestream' ? [...NOTES.livestream, NAV_NOTE] : NOTES[S.page]), BADGE_NOTE, PLAYER_NOTE, MARQUEE_NOTE, PANEL_NOTE, IMAGERY_NOTE, LABEL_NOTE, COLOR_NOTE, ...NOTES.lab]).filter(d => d.key !== '_moved');
   const seen = new Set();
   box.innerHTML = `<p class="n-intro">${{ home:'PBS.org home, localized to WXXI. Press a radio tile to start the bottom player, then move between pages.', livestream:'pbs.org/livestream for WXXI. Radio streams appear with their real program schedules.', station:'WTJX’s Bento site with the Bento station header. WTJX has two streams: FM 93.1 and AFRO (HD2). AFRO publishes no schedule, so it shows the stream’s frequency instead of a program. Option B shows wtjx.org’s Live Stream page; the others show the home page.', lab:'Every station with radio, in every place a logo appears. Use the filters to find problem logos, and the choices below to fix them.' }[S.page]}</p>
-    ${decs.filter(d => { if (seen.has(d.key)) return false; seen.add(d.key); return true; }).map(decCard).join('')}
-    <p class="n-arch">${ARCHIVE ? 'Showing decided and retired options. <a href="?#' + S.page + '">Hide them</a>' : 'Decided and retired options are hidden. <a href="?archive#' + S.page + '">Show them</a>'}</p>
+    ${(() => { const uniq = decs.filter(d => { if (seen.has(d.key)) return false; seen.add(d.key); return true; });
+        if (ARCHIVE) return uniq.map(decCard).join('');
+        const done = uniq.filter(isDecided);
+        return uniq.filter(d => !isDecided(d)).map(decCard).join('') + (done.length ? `<details class="n-decs" ${P.decOpen ? 'open' : ''}><summary>Design decisions <span>(${done.length})</span></summary><p class="n-decs-i">Settled in review. Each note says what the design does and why.</p>${done.map(decNote).join('')}</details>` : ''); })()}
+    <p class="n-arch">${ARCHIVE ? 'Showing retired options. <a href="?#' + S.page + '">Hide them</a>' : 'Retired options are hidden. <a href="?archive#' + S.page + '">Show them</a>'}</p>
     <h4 class="n-h">Scenarios</h4>
     <p class="n-intro" style="margin-top:-6px">Scenarios change what the prototype pretends is happening. Pick one, then press play on a radio stream (a home page radio tile, a radio row on Live TV, or the station widget). Your choice stays until you change it or press “Use recommended.”</p>
     <section class="dec scen">
@@ -2119,6 +2144,7 @@ document.addEventListener('click', (e) => {
 });
 // resume from "paused while video plays"
 document.addEventListener('click', (e) => { const b = e.target.closest('.bp-play'); if (b && P.status === 'paused-video') { /* handled by togglePlay: status isn't playing, so it restarts */ } }, true);
+document.addEventListener('toggle', (e) => { if (e.target.classList && e.target.classList.contains('n-decs')) P.decOpen = e.target.open; }, true);
 document.addEventListener('change', (e) => {
   if (e.target.id === 'labSel') { S.lab.call = e.target.value; S.lab.stream = 0; render(); }
   if (e.target.dataset && e.target.dataset.lab === 'boxes') { S.lab.boxes = e.target.checked; render(); }
