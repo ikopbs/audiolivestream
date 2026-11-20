@@ -862,6 +862,39 @@ span.illus,.illus{display:inline-block!important;width:auto!important;font-size:
 .bp.th-light .bp-ic{color:var(--pbs-blue)}
 .bp.th-light .bp-ic:hover{color:var(--medium-blue)}
 .bp.th-light .fl-media .bp-ic{color:#fff}
+
+/* ===== R2 (Nov 19 review) ===== */
+/* badge without RADIO: B keeps the red live dot, then headphones */
+.bug.radio.dot::before{display:inline-block;width:7px;height:7px}
+.bug.radio.dot.min::before{width:6px;height:6px}
+.bug.radio.dot svg{margin-left:1px}
+/* small tiles (2-up on phones): when playing, the badge replaces the subtitle so nothing is cut off */
+@container (max-width:220px){.t-txt .np-badge ~ .t-ep{display:none}.tile.radio .tile-name{min-height:16px}}
+/* expanded player header: room for the caret (was 8px from the edge) */
+.bp-ph{padding:16px 16px 0 16px}
+@container dev (max-width:767px){.bp-ph{padding:20px 20px 4px 20px}.bp-panel-in{padding:16px 20px 20px}}
+/* current program row readable in every theme */
+.bp .sch-list div.cur{color:var(--bp-fg)}
+/* PBS light: expanded player and stream-list popups on Neutrals / Fog */
+.bp.th-light .bp-panel{background:var(--fog);--bp-line:var(--rain)}
+.hdr-pop .wdg.th-light,.b-np-menu .wdg.th-light{background:var(--fog);border-color:var(--rain);--w-line:var(--rain)}
+/* radio tile rows on /livestream */
+.rrows{padding:8px var(--si) 40px}
+.embed .rrows{padding:8px 24px 24px}
+.rrow{margin-bottom:28px}
+.rrow h3{margin:0 0 12px;font-size:18px;line-height:1.25;font-weight:700}
+.tile.up{cursor:default}
+.tile.up:hover{scale:1;outline-color:transparent;border-radius:14px}
+.tile.up .field{opacity:.6}
+.up-time{font-size:11px;font-weight:700;line-height:1.5;text-transform:uppercase;color:var(--white)}
+@container dev (max-width:767px){.rrow h3{font-size:16px}}
+/* notes: decided and retired options */
+.dec-tag{font-size:9.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--midnight);background:var(--fog);border-radius:3px;padding:1px 5px;white-space:nowrap}
+.opt.decided{cursor:default}
+.n-ret{margin:4px 0 0;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--pt-sub)}
+.opt.retired{opacity:.6;border-style:dashed}
+.n-arch{font-size:11.5px;line-height:1.5;color:var(--pt-sub);margin:0}
+.n-arch a{color:var(--pt-text)}
 /* ===== Notes drawer ===== */
 .notes{width:400px;border-left:1px solid var(--pt-line);background:var(--pt-bg);overflow-y:auto;min-height:0}
 .notes[hidden]{display:none}
@@ -934,7 +967,7 @@ const IMG = {
   lwxxi:'{{img:l-wxxi.jpg}}', lcreate:'{{img:l-create.jpg}}', lworld:'{{img:l-world.jpg}}', lkids:'{{img:l-kids.jpg}}',
   wxxiScenery:'{{img:wxxi-scenery.jpg}}',
   wtjxCobrand:'{{img:wtjx-cobrand.png}}', wtjxCobrandWhite:'{{img:wtjx-cobrand-white.png}}', wtjxWhite:'{{img:wtjx-white.png}}',
-  wtjxMark:'{{img:wtjx-mark.png}}', wtjxMarkWhite:'{{img:wtjx-mark-white.png}}'
+  wtjxMark:'{{img:wtjx-mark.png}}', wetaCustom:'{{img:weta-classical-custom.png}}', wtjxMarkWhite:'{{img:wtjx-mark-white.png}}'
 };
 const SVG = {
   pbs:`{{svg:pbs-logotype-white--blue-fill-face}}`,
@@ -1057,14 +1090,25 @@ const byId = (id) => SN(ALL.find(s => s.id === id));
 /* ---------- state ---------- */
 const DEF = {
   page:'home', device:'desktop', notes: window.innerWidth > 900,
-  opt:{ homeTile:'A', imagery:'brand', livePlace:'grid', liveClick:'stage', bar:'A', av:'pause', widget:'card', theme:'brand', label:'derived', color:'shade', viz:'rings', marquee:'once', vizAccent:'coral', panelBg:'bluegray', navLive:'live', logoSize:'area', logoPad:'trimmed', logoVariant:'chain' },
+  opt:{ homeTile:'A', imagery:'brand', livePlace:'grid', liveClick:'stage', bar:'A', av:'pause', widget:'card', theme:'light', label:'derived', color:'shade', viz:'ambient', badge:'dot', marquee:'once', vizAccent:'coral', panelBg:'bluegray', navLive:'live', logoSize:'area', logoPad:'trimmed', logoVariant:'chain' },
   scen:{ health:'live', sched:'normal', names:'typical', streams:2 }
 };
 let S = JSON.parse(JSON.stringify(DEF));
 try { const saved = JSON.parse(localStorage.getItem('alsp') || 'null'); if (saved) { Object.assign(S.opt, saved.opt || {}); Object.assign(S.scen, saved.scen || {}); if (saved.device) S.device = saved.device; } } catch (e) {}
 if (!['A', 'B', 'C', 'D'].includes(S.opt.bar)) S.opt.bar = 'A';
 if (!['card', 'embed', 'header', 'below'].includes(S.opt.widget)) S.opt.widget = 'card';
+// R2 (Nov 19 review): options that were not kept. They stay in the code and come back with ?archive in the URL.
+const ARCHIVE = /(^|[?&#])archive\b/.test(location.search + '&' + location.hash.slice(1));
+const RETIRED = { homeTile:['B','C'], navLive:['radio','tv'], av:['ask','end'], bar:['B','C','D'], marquee:['loop','off'], panelBg:['navy'],
+  imagery:['art'], label:['full','logo'], color:['station','genre'], logoSize:['box','height'], logoPad:['delivered'], logoVariant:['white','wcob'],
+  vizAccent:['purple','yellow'], livePlace:['section'], liveClick:['banner','bar','drawer'], theme:['brand'], badge:['radio'] };
+const isRetired = (k, v) => (RETIRED[k] || []).includes(v);
+if (!ARCHIVE) for (const k of Object.keys(RETIRED)) if (isRetired(k, S.opt[k])) S.opt[k] = DEF.opt[k];
 const LAB = {{json:lab}};
+// Custom stream logo test (WETA isn't in the radio data; sample entry).
+LAB.push({ call:'WETA', name:'WETA', city:'Arlington', state:'VA', sample:true, logos:{}, streams:[
+  { id:'weta-classical', name:'WETA Classical', call:'WETA', freq:'90.9 FM', now:'Sample listing', sub:'Custom logo uploaded by the station', sched:true,
+    custom:{ uri:IMG.wetaCustom, W:300, H:52, bb:[0, 0, 300, 52], lum:1 } } ] });
 S.lab = { mode:'station', call:'WXXI', stream:0, filter:'all', boxes:false, pick:'first' };
 const P = { npSw:false, navPop:false, shift:0, swapUntil:0, id:null, status:'idle', sim:false, expanded:false, vol:0.8, pausedBy:null, drawer:false, picker:false, hdrPop:false };
 const V = { ch:'WXXI', playing:true };   // /livestream TV player
@@ -1124,6 +1168,7 @@ function deriveLabel(st) {
   return best;
 }
 function labelOf(st) {
+  if (st.custom) return '';   // a custom stream logo already names the stream
   if (st.forceLabel) return st.forceLabel;
   if (S.opt.label === 'logo') return '';
   if (S.opt.label === 'full') return st.name;
@@ -1172,7 +1217,12 @@ const illusOld = (st) => st.from ? `<span class="illus" title="Real feed name fr
 const errLine = (st) => P.id === st.id ? ({ offline:'Offline right now', unsupported:'Can’t play in this browser', ad:'Ad break', reconnecting:'Reconnecting…' })[P.status] || '' : '';
 const pIcon = (id) => isPlaying(id) ? SVG.baPause : SVG.baPlay;
 const IB = (id, min) => (isPlaying(id) ? SVG.ibPause : SVG.ibPlay).replace('class="ib"', `class="ib${min ? ' min' : ''}"`);
-const liveBadge = (min) => `<span class="bug radio${min ? ' min' : ''}">${SVG.head}Live radio</span>`;
+const liveBadge = (min) => {
+  const m = min ? ' min' : '';
+  if (S.opt.badge === 'radio') return `<span class="bug radio${m}">${SVG.head}Live radio</span>`;   // R1
+  if (S.opt.badge === 'hp') return `<span class="bug radio${m}">${SVG.head}Live</span>`;
+  return `<span class="bug radio dot${m}">Live${SVG.head}</span>`;
+};
 const busy = () => P.status !== 'playing';
 
 /* ---------- pages ---------- */
@@ -1366,7 +1416,20 @@ function liveBlock(stn) {
     <section class="sched"><div class="sched-h"><h2><span class="live-dot"></span>${stn} Live TV Schedule</h2><a>On Air Schedule ↗</a><span class="tz">Timezone: ${STN[stn].tzName}</span></div>
       ${grid(stn)}
       <p class="disclaim">Livestreams may follow a different schedule than your on-air broadcast.${TVS[stn][0].sample ? ' WTJX TV listings in this prototype are samples.' : ''}</p></section>
-    ${S.opt.livePlace === 'section' ? radioSection(stn) : ''}`;
+    ${S.opt.livePlace === 'rows' ? radioTileRows(stn) : S.opt.livePlace === 'section' ? radioSection(stn) : ''}`;
+}
+// Option B on /livestream: a row per stream, like the Live TV rows: Now, then what's next from its schedule.
+function upTile(st, e, tz) {
+  return `<div class="tile radio up" role="listitem" aria-label="${esc(e.t)}, ${fmt(e.s, tz)}">${field(st)}
+    <span class="tile-i"><span class="tile-name"><span class="up-time">${fmt(e.s, tz)}</span></span>
+    <span class="t-txt"><span class="t-show">${esc(e.t)}</span><span class="t-ep">${Math.round((e.e - e.s) / 60000)} minutes</span></span></span></div>`;
+}
+function radioTileRows(stn) {
+  const sts = streamsFor(stn); if (!sts.length) return '';
+  return `<section class="rrows" aria-label="${stn} Live Radio"><div class="sched-h"><h2><span class="live-dot"></span>${stn} Live Radio</h2></div>
+    ${sts.map(st => { const tz = tzOf(st), up = (st.sched || []).filter(e => e.s > nowAt(st)).slice(0, 4);
+      return `<div class="rrow"><h3>${esc(st.name)}</h3><div class="tiles" role="list">${radioTile(st)}${up.map(e => upTile(st, e, tz)).join('')}</div></div>`; }).join('')}
+  </section>`;
 }
 function pageLive() {
   return `<div class="site">${nav()}${liveBlock('WXXI')}${footer()}</div>`;
@@ -1384,13 +1447,13 @@ function pickLogo(stn) {
 }
 const pickLabel = (stn) => { const L = stn.logos || {}; if (S.opt.logoVariant === 'wcob') return L.wcob ? 'White co-branded' : 'Call letters (no logo)'; if (S.opt.logoVariant === 'white') return L.white ? 'White' : 'Call letters (no white logo)'; return L.white && L.white.lum >= LUM_MIN ? 'White' : L.wcob ? (L.white ? 'White co-branded (white logo too dark)' : 'White co-branded (no white logo)') : 'Call letters'; };
 function labStream(stn, s, i) {
-  return { id:'lab-' + s.id, station:stn.call, call:s.call, callText:stn.call, name:s.name, freq:s.freq || 'Online stream', short:null, labIndex:i, labLogo:pickLogo(stn), labNow:s.now, labSub:s.sub, sched:null };
+  return { id:'lab-' + s.id, station:stn.call, call:s.call, callText:stn.call, name:s.name, freq:s.freq || 'Online stream', short:null, labIndex:i, labLogo:s.custom || pickLogo(stn), custom:!!s.custom, labNow:s.now, labSub:s.sub, sched:null };
 }
 function flagsOf(stn) {
   const L = stn.logos || {}, f = [];
   const w = L.white, ar = w ? (w.bb[2] - w.bb[0]) / (w.bb[3] - w.bb[1]) : null;
   const pad = w ? 1 - ((w.bb[2] - w.bb[0]) * (w.bb[3] - w.bb[1])) / (w.W * w.H) : 0;
-  if (!w) f.push(['nowhite', 'No white logo', 1]);
+  if (!w && !stn.sample) f.push(['nowhite', 'No white logo', 1]);
   if (w && w.lum < LUM_MIN) f.push(['dark', 'White logo isn’t light', 1]);
   if (ar && ar > 4.5) f.push(['wide', `Wide ${ar.toFixed(1)}:1`, 0]);
   if (ar && ar < 2) f.push(['compact', `Compact ${ar.toFixed(1)}:1`, 0]);
@@ -1398,9 +1461,11 @@ function flagsOf(stn) {
   if (!stn.streams.length) f.push(['nostream', 'No streams', 1]);
   if (stn.streams.length >= 5) f.push(['many', `${stn.streams.length} streams`, 0]);
   if (stn.streams.some(s => s.name.length > 30)) f.push(['long', 'Long feed name', 0]);
+  if (stn.streams.some(s => s.custom)) f.push(['custom', 'Custom stream logo', 0]);
+  if (stn.sample) f.push(['sample', 'Sample (not in radio data)', 0]);
   return f;
 }
-const FILTERS = [['all', 'All'], ['nowhite', 'No white logo'], ['dark', 'Logo not light'], ['wide', 'Wide logo'], ['compact', 'Compact logo'], ['padded', 'Padded logo'], ['many', '5+ streams'], ['long', 'Long feed name'], ['nostream', 'No streams']];
+const FILTERS = [['all', 'All'], ['nowhite', 'No white logo'], ['dark', 'Logo not light'], ['wide', 'Wide logo'], ['compact', 'Compact logo'], ['padded', 'Padded logo'], ['many', '5+ streams'], ['long', 'Long feed name'], ['custom', 'Custom stream logo'], ['nostream', 'No streams']];
 const labList = () => S.lab.filter === 'all' ? LAB : LAB.filter(s => flagsOf(s).some(f => f[0] === S.lab.filter));
 const flagHtml = (stn) => flagsOf(stn).map(f => `<span class="flag ${f[2] ? 'warn' : ''}">${f[1]}</span>`).join('') || '<span class="flag ok">No issues</span>';
 function specTile(st, w) {
@@ -1425,7 +1490,7 @@ function logoTable(stn) {
   const L = stn.logos || {}, used = pickLogo(stn);
   const rows = [['white', 'White', 'dark'], ['wcob', 'White co-branded', 'dark'], ['color', 'Color', 'light'], ['ccob', 'Color co-branded', 'light']];
   return `<div class="scroller"><table class="ltable"><thead><tr><th>Variant</th><th>Logo</th><th>Image size</th><th>Mark aspect</th><th>Empty padding</th><th>Brightness</th><th></th></tr></thead><tbody>
-    ${rows.map(([k, n, bg]) => { const v = L[k]; if (!v) return `<tr><td>${n}</td><td colspan="5" style="color:var(--coral)">Not in Station Services</td><td></td></tr>`;
+    ${rows.map(([k, n, bg]) => { const v = L[k]; if (!v) return `<tr><td>${n}</td><td colspan="5" style="color:${stn.sample ? 'var(--pebble)' : 'var(--coral)'}">${stn.sample ? 'Not loaded (sample station)' : 'Not in Station Services'}</td><td></td></tr>`;
       const bw = v.bb[2] - v.bb[0], bh = v.bb[3] - v.bb[1], pad = 1 - bw * bh / (v.W * v.H);
       return `<tr><td>${n}</td><td><span class="sw ${bg}"><img src="${v.uri}" alt=""></span></td><td>${v.W}×${v.H}</td><td>${(bw / bh).toFixed(2)}:1</td><td style="color:${pad > .3 ? 'var(--coral)' : 'inherit'}">${Math.round(pad * 100)}%</td><td style="color:${k.startsWith('w') && v.lum < LUM_MIN ? 'var(--coral)' : 'inherit'}">${v.lum.toFixed(2)}</td><td>${v === used ? '<span class="flag ok">Used</span>' : ''}</td></tr>`; }).join('')}
   </tbody></table></div>`;
@@ -1442,7 +1507,7 @@ function pageLab() {
       <label><input type="checkbox" data-lab="boxes" ${S.lab.boxes ? 'checked' : ''}> Show logo boxes</label>
     </div>
     <div class="chipset" style="margin-top:10px" role="group" aria-label="Filter">${FILTERS.map(([k, n]) => `<button data-lab="filter" data-val="${k}" aria-pressed="${S.lab.filter === k}">${n}<b>${counts[k]}</b></button>`).join('')}</div>`;
-  const head = `<header class="lab-h"><h1>Logo lab</h1><p>All ${LAB.length} PBS stations with radio streams, using their real logos from Station Services and their real feed names and what’s on now from the radio API (snapshot Nov 18). Sizing, padding and fallback choices in the notes panel apply here and everywhere else in the prototype.</p>${ctl}</header>`;
+  const head = `<header class="lab-h"><h1>Logo lab</h1><p>All ${LAB.filter(s => !s.sample).length} PBS stations with radio streams (plus WETA Classical, a sample with a custom stream logo), using their real logos from Station Services and their real feed names and what’s on now from the radio API (snapshot Nov 18). Sizing, padding and fallback choices in the notes panel apply here and everywhere else in the prototype.</p>${ctl}</header>`;
   if (S.lab.mode === 'sheet') {
     return `<div class="site"><div class="lab ${S.lab.boxes ? 'show-boxes' : ''}">${head}<div class="sheet">${list.map(s => {
       if (!s.streams.length) return `<article class="card"><div class="card-h"><span><b>${s.call}</b> · ${esc(s.name)}</span></div><div><span class="flag warn">No streams in the data</span></div><p style="margin:0;font-size:13px;color:var(--pebble);line-height:1.5">Matched as a joint licensee, but the radio data has no stream for it. On PBS.org this station shows no radio at all.</p></article>`;
@@ -1592,7 +1657,7 @@ function bottomPlayer() {
   const panel = `<div class="bp-panel" ${P.expanded ? '' : 'inert'}><div class="bp-ph"><span>Now playing</span><button class="bp-ic" data-expand="1" aria-expanded="true" aria-label="Collapse player">${SVG.baCaret}</button></div><div class="bp-panel-in">
       <div class="np-sec"><div class="np-head"><span class="sq">${field(st, S.opt.imagery === 'art' ? 'art' : 'brand')}${lockup(st, 22)}</span><span class="tx"><b>${esc(n.title)}</b><span>${esc(st.name)} · ${esc(st.freq)}</span>${n.track ? `<span>${esc(n.sub)}</span>` : ''}</span></div></div>
       <div class="np-sec"><h5>${st.sched ? `Today on ${esc(st.name)}` : 'Schedule'}</h5>${st.sched ? `<div class="sch-list">${st.sched.filter(e => e.e > NOW).slice(0, 4).map(e => `<div class="${NOW >= e.s && NOW < e.e ? 'cur' : ''}"><span>${NOW >= e.s && NOW < e.e ? 'Now' : fmtS(e.s, tz)}</span>${esc(e.t)}</div>`).join('')}</div>` : `<p style="margin:0;font-size:13px;line-height:1.5;color:var(--bp-sub)">No schedule available</p>`}</div>
-      ${sib.length > 1 ? `<div class="np-sec"><h5>More from ${esc(st.station)} radio</h5><div class="other">${sib.filter(s => s.id !== st.id).map(s => { const m = nowOf(s); return `<button data-play="${s.id}" data-switch="1" aria-label="Play ${esc(s.name)}"><span class="sq">${field(s, 'brand')}</span><span class="t"><b>${esc(s.name)}</b><span>${esc(m.title)}</span></span>${IB(s.id, true)}</button>`; }).join('')}</div></div>` : ''}
+      ${sib.length > 1 ? `<div class="np-sec"><h5>More from ${esc(st.station)} radio</h5><div class="other">${sib.filter(s => s.id !== st.id).map(s => { const m = nowOf(s); return `<button data-play="${s.id}" data-switch="1" aria-label="Play ${esc(s.name)}"><span class="sq">${field(s, 'brand')}</span><span class="t"><b>${esc(s.name)}</b><span>${esc(m.none ? s.freq : m.title)}</span></span>${IB(s.id, true)}</button>`; }).join('')}</div></div>` : ''}
     </div></div>`;
   el.innerHTML = `<div class="bp ${float ? 'float' : ''} ${P.expanded ? 'expanded' : ''} ${hide ? 'hidden' : ''} ${thc} ${!thc && S.opt.panelBg === 'bluegray' ? 'pbg' : ''}" role="region" aria-label="Radio player">
     ${panel}
@@ -1809,10 +1874,10 @@ function startVideo(chId, label, navigateTo) {
 const NOTES = {
   home: [
     { key:'homeTile', title:'Radio on the home page', sub:'Live TV row', opts:[
-      ['A','Radio tiles in the Live TV row','Each stream gets a tile after the TV channels: same 16:9 card, with a “Live radio” badge instead of the red dot. Pressing it starts the bottom player; it doesn’t navigate. Row title becomes “WXXI Live TV & Radio.”',true],
+      ['A','Radio tiles in the Live TV row','Each stream gets a tile after the TV channels: same 16:9 card, with the radio badge. Pressing it starts the bottom player; it doesn’t navigate. Row title becomes “WXXI Live TV & Radio.”',true],
       ['B','One “Listen” tile with a picker','A single WXXI Radio tile opens a short list of streams. The row stays the same length however many streams a station has. Two clicks to sound, and the tile can’t show what’s on.'],
       ['C','Separate Live Radio row','A second row of radio cards under Live TV. Leaves the TV row untouched, but adds a whole row to a long page, and radio reads as separate from “live.”'] ],
-      why:'A puts radio where people already look for “live,” and one click gets sound. Past 3 streams the row gets long (WGBH and WVIZ have 11); switch on 6 streams below to see it. B’s picker is the fallback for stations with 4 or more.' },
+      why:'Radio sits where people already look for “live,” and one click gets sound. Stations with many streams make a long row (WGBH and WVIZ have 11); set WXXI streams to 6 under Scenarios to see it.' },
     { key:'_moved', title:'', opts:[], why:'' }
   ],
   _unused: [
@@ -1827,30 +1892,31 @@ const NOTES = {
       ['pause','Video pauses the radio',`The bar stays, showing “Paused while video plays,” with one tap to resume.`,true],
       ['ask','Ask first','A dialog confirms the switch. Safe, but an extra step every time.'],
       ['end','Video ends the radio','The bar closes and a toast says what stopped. Simple, but people lose their place.'] ],
-      why:'Pausing is the least surprising: nothing plays over anything else, and getting back is one tap. Live radio “resumes” at the live edge.' }
+      why:'Nothing plays over anything else, and getting back is one tap. Live radio “resumes” at the live edge.' }
   ],
   livestream: [
     { key:'viz', title:'Animation in the radio player area', sub:'Press play on a radio row', opts:[
-      ['rings','Broadcast rings, on play and pause only','Three rings ripple out from the logo when you press play, then everything holds still while you listen. Pause or stop pulls the rings back in. Tuning in shows a slow inward pull.',true],
+      ['rings','Broadcast rings, on play and pause only','Three rings ripple out from the logo when you press play, then everything holds still while you listen. Pause or stop pulls the rings back in. Tuning in shows a slow inward pull.'],
       ['wave','Spectrum and waveform','Bars and a line that move with the sound, all the time. Reacts to the real audio where the stream allows it (GitHub Pages, not claude.ai); simulated otherwise.'],
-      ['ambient','Ambient color drift','Slow, eased color fields in the stream’s blues plus one accent color (pick it below). Calm and good for music, but says less about “live.”'],
+      ['ambient','Ambient color drift','Slow, eased color fields in the stream’s blues plus a coral accent. Calm, and works for talk and music alike.',true],
       ['still','Still','No motion. Everyone with reduced motion turned on gets this, whatever is chosen.'] ],
-      why:'Constant motion behind a program title competes with reading and can bother people sensitive to motion, so A only moves when something changes: play, pause, stop. B and C move the whole time; they stay in as alternatives. Try “Preview a program change” under Scenarios to see the title transition.' },
+      why:'' },
     { key:'vizAccent', title:'Accent color in the ambient drift', sub:'Option C above', opts:[
       ['coral','Coral','PBS’s warm accent (the Now Playing badge, footer headings). The most contrast with the blues.',true],
       ['purple','Purple','Stays cool and close to the blues. Subtle; reads as depth more than color.'],
       ['yellow','Yellow','The schedule’s time color. Bright; best kept to a small share of the field.'] ],
-      why:'One accent keeps the field from feeling flat without turning it into a light show. Coral is already the accent used next to PBS blues.' },
+      why:'Coral is already the accent PBS uses next to its blues (the Now Playing badge, footer headings).' },
     { key:'livePlace', title:'Where radio sits on /livestream', opts:[
       ['grid','Rows in the schedule grid','Radio streams get rows under the TV channels, below a “WXXI Radio” label, with real program schedules on the same timeline. Selecting one gives it the grid’s selected treatment.',true],
-      ['section','Separate section below the grid','A “WXXI Live Radio” list of radio cards under the TV schedule. Easier to scan on a phone, but radio reads as an add-on.'] ],
-      why:'The spec asks for streams in the live schedule next to TV channels, which is what Local Public does. The schedule data (NPR Cadence) fits the grid as is.' },
+      ['section','Separate section below the grid','A “WXXI Live Radio” list of radio cards under the TV schedule. Easier to scan on a phone, but radio reads as an add-on.',false,'R1'],
+      ['rows','Radio rows with what’s coming up','Under the TV schedule, each stream gets a row of tiles like the Live TV row: what’s on now, then the next programs from its schedule. Streams without a schedule show just the Now tile.',false,'B'] ],
+      why:'The grid puts radio on the same timeline as TV, which is what the spec asks for (and what Local Public does). Tile rows are easier to scan on a phone and show what’s coming up, but radio sits apart from the TV schedule.' },
     { key:'liveClick', title:'What happens when you press play on radio', opts:[
       ['stage','The player area becomes the radio','The video player area swaps to the radio player area: program, time range, progress and what’s next. The bottom player takes over once you scroll past it or leave the page.',true],
       ['banner','The player area shrinks to a radio banner','Same idea, but the 16:9 area collapses to a short banner so the schedule moves up. The page jumps when switching between TV and radio.'],
       ['bar','Bottom player only','The video player stays on the TV channel (paused) and radio plays in the bottom player, as on every other page. The biggest area on the page shows a paused channel.'],
       ['drawer','Now-playing side panel','A panel with the stream’s full day and other streams; closing it leaves the bottom player. A new pattern for PBS.org (no side panels in the library).'] ],
-      why:'On this page the player area is “what you’re tuned to.” Selecting a radio row should behave like selecting a TV row. The stage also gives room for what radio has: program, time left, up next.' },
+      why:'On this page the player area is “what you’re tuned to,” so selecting a radio row behaves like selecting a TV row. It also gives room for what radio has: program, time left, up next.' },
     { key:'av', title:'When video starts during audio', sub:'Pick a TV row while listening', opts:[
       ['pause','Video pauses the radio','',true], ['ask','Ask first',''], ['end','Video ends the radio',''] ], why:'' }
   ],
@@ -1862,10 +1928,10 @@ const NOTES = {
       ['below','Player bar under the station header','A slim bar directly under the header on every page, like NPR station sites (e.g. WCMU): play, the stream, what’s on air, a stream switcher, schedule and donate links. The bottom player takes over once the bar scrolls out of view.',false,'D'] ],
       why:'Today WTJX places two Bento audio players, one per stream, with a progress bar and 00:00 timers that don’t apply to live radio. The widget replaces both and shows what’s on each stream. B reuses PBS.org’s component as is, so radio stays in sync with pbs.org, but it lives on one page and keeps PBS.org’s dark look. D is the most visible and familiar to public radio listeners, but adds a bar to every page above the station’s own content. C and D work well alongside A. Open question: keep the Bento audio player for on-demand audio (podcasts)?' },
     { key:'theme', title:'Theme', sub:'Widget and bottom player', opts:[
-      ['brand','Station brand','The widget and bottom player take the two colors set in the station’s Bento theme (WTJX: navy and crimson).',true],
-      ['pbs','PBS dark','The same dark surfaces as pbs.org. Consistent across PBS, but reads as foreign on a light station site.'],
-      ['light','PBS light','For co-branded light Bento sites: white surfaces, midnight text and icons.'] ],
-      why:'A station’s site should feel like the station. The player takes its two colors from the Bento theme, and the PBS light and dark versions stay as presets.' }
+      ['brand','Station brand','The widget and bottom player take the two colors set in the station’s Bento theme (WTJX: navy and crimson).'],
+      ['light','PBS light','For co-branded light Bento sites: white surfaces, PBS Blue controls. The expanded player and the stream-list popups use Fog.',true,'B'],
+      ['pbs','PBS dark','The same dark surfaces as pbs.org.',false,'C'] ],
+      why:'Light and dark ship at launch. Light suits co-branded light Bento sites like WTJX; dark matches PBS.org.' }
   ]
 };
 NOTES.lab = [
@@ -1888,7 +1954,7 @@ const IMAGERY_NOTE = { key:'imagery', title:'Tile and player imagery', sub:'Appl
       ['brand','Branded field','Stream colors, a broadcast-ring texture and the station logo. Works for every station with no new assets.',true],
       ['scenery','Station scenery photo','Uses the station-scenery image PBS already stores for some stations, dimmed like TV tiles. WTJX has none, so it falls back.'],
       ['art','Album art when the feed sends it','Music feeds sometimes include cover art (e.g. WABE, WUFT). Shown on the sample Classical stream; everything else falls back.'] ],
-      why:'Radio has no listing images, and only some feeds send art. The branded field is the dependable base. Album art can sit on top of it when it arrives.' };
+      why:'Radio has no listing images. The branded field works for every station with no new assets; B is here to show how scenery photos would look where a station has them (WTJX has none, so it falls back).' };
 const LABEL_NOTE = { key:'label', title:'Stream name in the logo tile', sub:'Turn on Long names below', opts:[
       ['derived','Short label','A short name entered by the station (max 12 characters). When there isn’t one, we derive it from the feed name: drop the call letters, frequencies and anything in parentheses, then take the first short phrase.',true],
       ['full','Full feed name','The whole name, wrapped to 3 lines. Fine for “WXXI News,” unreadable for “WUFT 89.1: NPR News/Talk in North Central Florida.”'],
@@ -1898,44 +1964,62 @@ const COLOR_NOTE = { key:'color', title:'Stream colors', sub:'Logo tiles and pla
       ['shade','Station color family, one shade per stream','PBS blues on pbs.org (the API has no station colors). On station sites, the Bento theme colors. Each stream gets the next shade in order.',true],
       ['station','One color for all of a station’s streams','Simplest and most on-brand. Streams are told apart only by their labels.'],
       ['genre','Color by format','News blue, classical purple, jazz orange, and so on. Easy to scan, but the API has no genre field (only “music only”), so someone would have to tag every stream.'] ],
-      why:'Shades follow a rule we can apply with the data we have: no hand-picked colors, no new fields. Format colors read well (this was the first version), but they need a genre tag that doesn’t exist yet.' };
+      why:'Shades follow a rule we can apply with the data we have: no hand-picked colors, no new fields.' };
+const BADGE_NOTE = { key:'badge', title:'Radio badge', sub:'Tiles, player area, bottom player', opts:[
+  ['radio','LIVE RADIO (R1)','The R1 badge: headphones and “Live radio.”',false,'R1'],
+  ['hp','Headphones + LIVE','The same outlined bug as Live TV, with headphones in place of the red dot.',false,'A'],
+  ['dot','Red dot + LIVE + headphones','Identical to the Live TV bug, with headphones after “Live.”',true,'B'] ],
+  why:'TV tiles say just “LIVE,” so radio drops “RADIO” too. B keeps the red dot meaning “live” the same on TV and radio, and the headphones say it’s audio. A reads as audio first, but loses the shared live dot.' };
 const NAV_NOTE = { key:'navLive', title:'Live radio in the PBS.org header', sub:'Hover the header item', opts:[
   ['live','“Live” with a menu: Live TV or Live Radio','Live TV becomes “Live” with the red dot. Hovering opens a menu like Shop and Donate, with Live TV and Live Radio. Clicking “Live” still goes to Live TV, so nothing changes for people who don’t hover.',true],
   ['radio','A “Live Radio” item next to Live TV','A second header item with the headphones icon. Hovering lists the station’s streams to play right there, with a link to the radio schedule on Live TV.'],
   ['tv','Live TV only (today)','No header change. Radio is reached from the Live TV row on the home page and from the radio rows on Live TV.'] ],
-  why:'The header has little room left: at tablet widths My Station and My List already drop off. “Live” adds radio without adding an item, and stations without radio simply show Live TV. A separate item makes radio most visible but costs header space on every page. Menus open on hover only with a mouse; on phones they open on tap.' };
+  why:'“Live” adds radio without adding a header item (at tablet widths My Station and My List already drop off), and stations without radio simply show Live TV. Menus open on hover with a mouse; on phones they open on tap.' };
 const MARQUEE_NOTE = { key:'marquee', title:'Long titles in the bottom player', sub:'Try Stream names: Long, on mobile', opts:[
   ['once','Scroll once, then rest','When a line is cut off, it waits a moment, scrolls to show the rest, and slides back. Lines take turns: title, then details, then stream name. Runs again when the program changes, or when you hover over it.',true],
   ['loop','Keep scrolling','The title repeats for as long as it’s cut off, like many podcast apps. Pauses while you hover over it. Other lines stay cut off.'],
   ['off','Cut off with …','Today’s behavior. Tapping the text opens the full title in the expanded player.'] ],
-  why:'Scrolling once lets people read the whole title without text moving at the edge of the screen the whole time. Content that moves by itself for more than 5 seconds needs a way to pause it (WCAG 2.2.2), which a loop only has on hover. With reduced motion turned on, lines stay cut off and tapping still opens the full title.' };
+  why:'Scrolling once lets people read the whole title without text moving at the edge of the screen the whole time (WCAG 2.2.2 asks for a way to pause anything that moves for more than 5 seconds). With reduced motion turned on, lines stay cut off and tapping opens the full title.' };
 const PANEL_NOTE = { key:'panelBg', title:'Expanded player background', sub:'Press ⌃ on the bottom player', opts:[
   ['bluegray','Neutrals / Blue-Gray','The same surface as the PBS.org header menus (Shop, Donate). Separates the panel from the navy bar. Secondary text moves from Pebble to Moon to keep 4.5:1 contrast.',true],
   ['navy','Same navy as the bar','Panel and bar read as one piece. Less separation from the page above.'] ],
-  why:'Blue-Gray matches how PBS.org already shows things that open over the page. Pebble on Blue-Gray is only 3.4:1, so the panel uses Moon (5.4:1) for secondary text. On station sites the panel keeps the station theme.' };
+  why:'Blue-Gray matches how PBS.org already shows things that open over the page. Pebble on Blue-Gray is only 3.4:1, so the panel uses Moon (5.4:1) for secondary text. On station sites with the PBS light theme, the panel is Fog.' };
 const PLAYER_NOTE = { key:'bar', title:'Bottom player', sub:'Persists across pages', opts:[
-  ['A','Decided: controls on the left, like the PBS video player','Pause and volume at the far left, where the PBS Video Player keeps them; expand and close at the right, where the video player keeps CC and fullscreen. A thin line shows how far into the program you are.',true],
+  ['A','Controls on the left, like the PBS video player','Pause and volume at the far left, where the PBS Video Player keeps them; expand and close at the right, where the video player keeps CC and fullscreen. A thin line shows how far into the program you are.',true],
   ['B','Play/pause centered','The common music-app layout (Spotify, Apple Music, NPR.org). No PBS precedent, and on a wide screen the control sits far from the stream info it acts on.'],
   ['C','Play/pause over the logo tile','The control sits on the artwork, the way the Floating Video Player centers play over the video image. Most compact, but a 52px target with the logo partly covered.'],
   ['D','Reuse the Floating Video Player','The library’s Floating Video Player (402×335, bottom right) with the logo tile in place of the video image and LIVE in place of the time. Covers more of the page, but it’s an approved pattern.'] ],
-  why:'Decided Nov 19: people already use the PBS video player, so the same icons in the same places mean nothing new to learn. There’s no seek bar: live radio can’t be scrubbed, and pause means stop and rejoin live.' };
+  why:'People already use the PBS video player, so the same icons in the same places mean nothing new to learn. There’s no seek bar: live radio can’t be scrubbed, and pause means stop and rejoin live.' };
 
+function decCard(d) {
+  const all = d.opts.map((o, i) => ({ o, k:o[4] || 'ABCD'[i], ret:isRetired(d.key, o[0]) }));
+  const live = all.filter(x => !x.ret), ret = all.filter(x => x.ret), decided = live.length === 1;
+  const btn = (x, extra) => `<button class="opt ${extra}" data-opt="${d.key}" data-val="${x.o[0]}" aria-pressed="${S.opt[d.key] === x.o[0]}"><span class="k">${x.k}</span><span><b>${x.o[1]}${x.o[3] && !decided && !x.ret ? '<span class="rec">Recommended</span>' : ''}</b>${x.o[2] ? `<span>${x.o[2]}</span>` : ''}</span></button>`;
+  return `<section class="dec"><h3>${d.title}${decided ? '<span class="dec-tag">Decided</span>' : d.sub ? `<small>${d.sub}</small>` : ''}</h3>
+    <div class="opts">${live.map(x => btn(x, decided ? 'decided' : '')).join('')}${ARCHIVE && ret.length ? `<p class="n-ret">Retired in R2</p>${ret.map(x => btn(x, 'retired')).join('')}` : ''}</div>
+    ${d.why ? `<p class="why">${d.why}</p>` : ''}</section>`;
+}
 const scenRow = (label, key, opts) => `<label>${label} <span class="seg">${opts.map(([v, l]) => `<button data-scen="${key}" data-val="${v}" aria-pressed="${String(S.scen[key]) === String(v)}">${l}</button>`).join('')}</span></label>`;
 function renderNotes() {
   const box = document.getElementById('notesIn');
-  const decs = (S.page === 'lab' ? [...NOTES.lab, LABEL_NOTE, COLOR_NOTE] : [...(S.page === 'home' ? [...NOTES.home, NAV_NOTE, ...NOTES.home2] : S.page === 'livestream' ? [...NOTES.livestream, NAV_NOTE] : NOTES[S.page]), PLAYER_NOTE, MARQUEE_NOTE, PANEL_NOTE, IMAGERY_NOTE, LABEL_NOTE, COLOR_NOTE, ...NOTES.lab]).filter(d => d.key !== '_moved');
+  const decs = (S.page === 'lab' ? [...NOTES.lab, LABEL_NOTE, COLOR_NOTE] : [...(S.page === 'home' ? [...NOTES.home, NAV_NOTE, ...NOTES.home2] : S.page === 'livestream' ? [...NOTES.livestream, NAV_NOTE] : NOTES[S.page]), BADGE_NOTE, PLAYER_NOTE, MARQUEE_NOTE, PANEL_NOTE, IMAGERY_NOTE, LABEL_NOTE, COLOR_NOTE, ...NOTES.lab]).filter(d => d.key !== '_moved');
   const seen = new Set();
   box.innerHTML = `<p class="n-intro">${{ home:'PBS.org home, localized to WXXI. Press a radio tile to start the bottom player, then move between pages.', livestream:'pbs.org/livestream for WXXI. Radio streams appear with their real program schedules.', station:'WTJX’s Bento site with the Bento station header. WTJX has two streams: FM 93.1 and AFRO (HD2). AFRO publishes no schedule, so it shows the stream’s frequency instead of a program. Option B shows wtjx.org’s Live Stream page; the others show the home page.', lab:'Every station with radio, in every place a logo appears. Use the filters to find problem logos, and the choices below to fix them.' }[S.page]}</p>
-    ${decs.filter(d => { if (seen.has(d.key)) return false; seen.add(d.key); return true; }).map(d => `<section class="dec"><h3>${d.title}${d.sub ? `<small>${d.sub}</small>` : ''}</h3><div class="opts">${d.opts.map((o, i) => `<button class="opt" data-opt="${d.key}" data-val="${o[0]}" aria-pressed="${S.opt[d.key] === o[0]}"><span class="k">${o[4] || 'ABCD'[i]}</span><span><b>${o[1]}${o[3] ? '<span class="rec">Recommended</span>' : ''}</b>${o[2] ? `<span>${o[2]}</span>` : ''}</span></button>`).join('')}</div>${d.why ? `<p class="why">${d.why}</p>` : ''}</section>`).join('')}
+    ${decs.filter(d => { if (seen.has(d.key)) return false; seen.add(d.key); return true; }).map(decCard).join('')}
+    <p class="n-arch">${ARCHIVE ? 'Showing options retired in R2. <a href="?#' + S.page + '">Hide them</a>' : 'Options retired after the R2 review are hidden. <a href="?archive#' + S.page + '">Show them</a>'}</p>
     <h4 class="n-h">Scenarios</h4>
+    <p class="n-intro" style="margin-top:-6px">Scenarios change what the prototype pretends is happening. Pick one, then press play on a radio stream (a home page radio tile, a radio row on Live TV, or the station widget). Your choice stays until you change it or press “Use recommended.”</p>
     <section class="dec scen">
       ${scenRow('Stream health', 'health', [['live','Live'],['offline','Offline'],['stall','Drops'],['ad','Ad first'],['unsupported','Format']])}
       <p class="scen-h">${{ live:'Plays normally.', offline:'The stream doesn’t answer.', stall:'Plays, drops after 5 seconds, then reconnects.', ad:'Triton streams can play a pre-roll ad on connect. The API reports “Ad break.”', unsupported:'An AAC-only stream on a browser without AAC (7 stations offer only AAC).' }[S.scen.health]} Press play to see it.</p>
       ${scenRow('Schedule data', 'sched', [['normal','Full'],['gap','Gap now'],['none','None']])}
-      <p class="scen-h">${{ normal:'Program names from NPR Cadence.', gap:'Cadence has holes, e.g. WXXI weekdays 10:19 to 11:51 AM UTC. The stream still plays.', none:'29 of 154 feeds have no schedule. We show the station and stream name.' }[S.scen.sched]}</p>
+      <p class="scen-h">${{ normal:'Program names from NPR Cadence.', gap:'Cadence has holes, e.g. WXXI weekdays 10:19 to 11:51 AM UTC. The stream still plays.', none:'29 of 154 feeds have no schedule. We show the station and stream name.' }[S.scen.sched]} Look at the radio rows on Live TV or the bottom player.</p>
       ${scenRow('Stream names', 'names', [['typical','Typical'],['long','Long (real)']])}
+      <p class="scen-h">${{ typical:'Names from WXXI and WTJX.', long:'Real long feed names from other stations (WUFT, WHYY, GBH…), to test logo labels, truncation and scrolling titles. Try it on Mobile.' }[S.scen.names]}</p>
       ${scenRow('WXXI streams', 'streams', [[0,'0'],[1,'1'],[2,'2'],[6,'6']])}
+      <p class="scen-h">How many radio streams WXXI has. 0 hides radio everywhere; 6 shows how the Live TV row and the grid grow.</p>
       <label>Program change <button class="pt-btn" data-shiftdemo="1">${P.shift ? 'Back to now' : 'Preview next program'}</button></label>
+      <p class="scen-h">While WXXI News or WTJX FM is playing, jumps to the next program so you can see the title change in the player and bottom player.</p>
       <label>Reset choices <button class="pt-btn" data-reset="1">Use recommended</button></label>
     </section>
     <p class="n-foot">Real data: WXXI TV listings and logos (pbs.org), WXXI News and WTJX schedules and stream URLs (radio.lls.pbs.org), snapshot Wed Nov 18, 4:05 PM ET. Only WXXI News is a real WXXI stream; WXXI Classical, Reading Service, Jazz, Holiday and Kids Radio are samples showing how extra streams behave. With Stream names set to Long, the streams show real feed names borrowed from other stations (WUFT, WGBH, KFME, KUHT, WRLK, WHYY). Type is PBS Sans from pbs.org’s font server; where it can’t load (as in the claude.ai preview), a similar Google font stands in. Components match the Figma file (Audiostream-Test), Nov 19.</p>`;

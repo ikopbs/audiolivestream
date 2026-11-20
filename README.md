@@ -6,7 +6,7 @@ The Figma counterpart is the Audiostream-Test file; components and copy in both 
 
 ## View it
 
-Open `index.html` in a browser, or the GitHub Pages site for this repo. Use the toolbar to switch pages and desktop/mobile, and **Options & notes** to compare design options and try scenarios (offline streams, long names, missing schedules).
+Open `index.html` in a browser, or the GitHub Pages site for this repo. Add `?archive` to the URL to see options retired in earlier rounds; see CHANGELOG.md. Use the toolbar to switch pages and desktop/mobile, and **Options & notes** to compare design options and try scenarios (offline streams, long names, missing schedules).
 
 ## Update it
 
