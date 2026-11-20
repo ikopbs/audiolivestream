@@ -2,7 +2,7 @@
 
 Each round is tagged as a GitHub release (R1, R2, …). Options cut in a round are not deleted: add `?archive` to the URL (for example `index.html?archive#home`) to see them again in the notes panel, marked “Retired in R2”.
 
-## R2 (in progress, branch `r2`)
+## R2 (Nov 20, 2026)
 
 From the Nov 19 R1 review with Mary (notes and annotated UI fixes on the Figma Read me page).
 
@@ -21,6 +21,7 @@ From the Nov 19 R1 review with Mary (notes and annotated UI fixes on the Figma R
 - Scenarios: a short how-to line for each one.
 
 **Fixes:**
+- Phones: the page now renders at the phone’s width (it was missing the viewport tag, so mobile Safari showed a zoomed-out desktop layout).
 - Small (mobile) radio tiles: when playing, the Now Playing badge replaces the subtitle so nothing is cut off.
 - Expanded player: more room around the collapse arrow (16px; 20px on phones).
 - PBS light expanded player: the current program row was invisible (white on white).
